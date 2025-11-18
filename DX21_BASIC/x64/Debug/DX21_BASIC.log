@@ -1,0 +1,44 @@
+﻿  compilation object save succeeded; see C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\PixelShader2D.cso
+  compilation object save succeeded; see C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\PixelShader3D.cso
+  compilation object save succeeded; see C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\VertexShader2D.cso
+  compilation object save succeeded; see C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\VertexShader3D.cso
+  cube.cpp
+  debug_camera.cpp
+  debug_text.cpp
+  direct3d.cpp
+  game.cpp
+  grid.cpp
+  keyboard.cpp
+  key_logger.cpp
+  light.cpp
+  main.cpp
+  map.cpp
+  model.cpp
+  mouse.cpp
+  polygon.cpp
+  shader.cpp
+  shader3d.cpp
+  sprite.cpp
+  sprite_anim.cpp
+  system_timer.cpp
+  texture.cpp
+  コードを生成中...
+  コンパイル中...
+  WICTextureLoader11.cpp
+  コードを生成中...
+DirectXTex_Debug.lib(DirectXTexImage.obj) : warning LNK4099: PDB 'DirectXTex.pdb' が 'DirectXTex_Debug.lib(DirectXTexImage.obj)' で、または 'C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DirectXTex.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+DirectXTex_Debug.lib(DirectXTexWIC.obj) : warning LNK4099: PDB 'DirectXTex.pdb' が 'DirectXTex_Debug.lib(DirectXTexWIC.obj)' で、または 'C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DirectXTex.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+DirectXTex_Debug.lib(DirectXTexD3D11.obj) : warning LNK4099: PDB 'DirectXTex.pdb' が 'DirectXTex_Debug.lib(DirectXTexD3D11.obj)' で、または 'C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DirectXTex.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+DirectXTex_Debug.lib(DirectXTexMipMaps.obj) : warning LNK4099: PDB 'DirectXTex.pdb' が 'DirectXTex_Debug.lib(DirectXTexMipMaps.obj)' で、または 'C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DirectXTex.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+DirectXTex_Debug.lib(DirectXTexUtil.obj) : warning LNK4099: PDB 'DirectXTex.pdb' が 'DirectXTex_Debug.lib(DirectXTexUtil.obj)' で、または 'C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DirectXTex.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+DirectXTex_Debug.lib(DirectXTexConvert.obj) : warning LNK4099: PDB 'DirectXTex.pdb' が 'DirectXTex_Debug.lib(DirectXTexConvert.obj)' で、または 'C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DirectXTex.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+DirectXTex_Debug.lib(DirectXTexCompress.obj) : warning LNK4099: PDB 'DirectXTex.pdb' が 'DirectXTex_Debug.lib(DirectXTexCompress.obj)' で、または 'C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DirectXTex.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+DirectXTex_Debug.lib(BC.obj) : warning LNK4099: PDB 'DirectXTex.pdb' が 'DirectXTex_Debug.lib(BC.obj)' で、または 'C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DirectXTex.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+DirectXTex_Debug.lib(BC4BC5.obj) : warning LNK4099: PDB 'DirectXTex.pdb' が 'DirectXTex_Debug.lib(BC4BC5.obj)' で、または 'C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DirectXTex.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+DirectXTex_Debug.lib(BC6HBC7.obj) : warning LNK4099: PDB 'DirectXTex.pdb' が 'DirectXTex_Debug.lib(BC6HBC7.obj)' で、または 'C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DirectXTex.pdb' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+  DX21_BASIC.vcxproj -> C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DX21_BASIC.exe
+  C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\PixelShader2D.cso
+  C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\PixelShader3D.cso
+  C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\VertexShader2D.cso
+  C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\VertexShader3D.cso
+  4 個のファイルをコピーしました

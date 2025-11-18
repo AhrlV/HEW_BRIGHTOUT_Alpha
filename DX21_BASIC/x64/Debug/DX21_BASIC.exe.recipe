@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs>
+    <ProjectOutput>
+      <FullPath>C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\DX21_BASIC.exe</FullPath>
+    </ProjectOutput>
+  </ProjectOutputs>
+  <ContentFiles>
+    <ContentFile>
+      <FullPath>C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\PixelShader2D.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\PixelShader3D.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\VertexShader2D.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\Ahrl\source\repos\DX22_3D\x64\Debug\VertexShader3D.cso</FullPath>
+    </ContentFile>
+  </ContentFiles>
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>
