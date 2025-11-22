@@ -81,6 +81,7 @@ int Texture_Load(const wchar_t* pFileName, bool isMipMap)
 
 		if (FAILED(hr)) {
 			MessageBox(nullptr, "テクスチャの読み込みに失敗しました", "エラー", MB_OK);
+			throw 0;
 			break;
 		}
 

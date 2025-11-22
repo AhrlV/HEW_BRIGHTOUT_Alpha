@@ -121,7 +121,7 @@ void Cube_Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 	HRESULT result_v = g_pDevice->CreateBuffer(&bd, &sd, &g_pVertexBuffer);
 
-	if (result_v != S_OK) throw 0;
+	if (FAILED(result_v)) throw 0;
 
 
 	// インデックスバッファ生成
@@ -135,7 +135,7 @@ void Cube_Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 	HRESULT result_i = g_pDevice->CreateBuffer(&bd, &sd, &g_pIndexBuffer);
 
-	if (result_i != S_OK) throw 0;
+	if (FAILED(result_i)) throw 0;
 
 }
 

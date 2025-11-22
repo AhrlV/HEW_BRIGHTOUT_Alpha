@@ -146,7 +146,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE /*hPrevInstanc
     Shader3d_Initialize(Direct3D_GetDevice(), Direct3D_GetDeviceContext());
 
     hal::DebugText dt(Direct3D_GetDevice(), Direct3D_GetDeviceContext(),
-        L"consolab_ascii_512.png",
+        L"resources/texture/consolab_ascii_512.png",
         Direct3D_GetBackBufferWidth(), Direct3D_GetBackBufferHeight(),
         0.0f, 0.0f,
         0, 0,

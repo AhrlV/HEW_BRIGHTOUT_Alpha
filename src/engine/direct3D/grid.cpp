@@ -30,8 +30,8 @@ static int g_Num_vertex; //頂点数
 // 頂点構造体
 struct Vertex3d
 {
-	XMFLOAT3 position; // 頂点座標
-	XMFLOAT4 color;    // カラー
+	XMFLOAT3 position{}; // 頂点座標
+	XMFLOAT4 color{};    // カラー
 	XMFLOAT3 normal{0.0f,0.0f,0.0f};
 	XMFLOAT2 texcoord = {0.0f, 0.0f};
 	float texuse = 0.0f;
@@ -105,7 +105,7 @@ void Grid_Init(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, int x_count
 
 	HRESULT result = g_pDevice->CreateBuffer(&bd, &sd, &g_pVertexBuffer);
 
-	if (result) throw 0;
+	if (FAILED(result)) throw 0;
 
 	delete[] pV;
 }

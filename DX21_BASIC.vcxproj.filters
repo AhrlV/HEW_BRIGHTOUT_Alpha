@@ -19,146 +19,137 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="direct3d.cpp">
+    <ClCompile Include="src\core\main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\engine\direct3D\cube.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="polygon.cpp">
+    <ClCompile Include="src\engine\direct3D\debug_camera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="shader.cpp">
+    <ClCompile Include="src\engine\direct3D\debug_text.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="texture.cpp">
+    <ClCompile Include="src\engine\direct3D\direct3d.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="sprite.cpp">
+    <ClCompile Include="src\engine\direct3D\game.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="sprite_anim.cpp">
+    <ClCompile Include="src\engine\direct3D\grid.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="system_timer.cpp">
+    <ClCompile Include="src\engine\direct3D\key_logger.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="WICTextureLoader11.cpp">
+    <ClCompile Include="src\engine\direct3D\keyboard.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="debug_text.cpp">
+    <ClCompile Include="src\engine\direct3D\light.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="keyboard.cpp">
+    <ClCompile Include="src\engine\direct3D\model.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="mouse.cpp">
+    <ClCompile Include="src\engine\direct3D\mouse.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="key_logger.cpp">
+    <ClCompile Include="src\engine\direct3D\polygon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="cube.cpp">
+    <ClCompile Include="src\engine\direct3D\shader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="shader3d.cpp">
+    <ClCompile Include="src\engine\direct3D\shader3d.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="grid.cpp">
+    <ClCompile Include="src\engine\direct3D\sprite.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="game.cpp">
+    <ClCompile Include="src\engine\direct3D\system_timer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="debug_camera.cpp">
+    <ClCompile Include="src\engine\direct3D\texture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="map.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="light.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="model.cpp">
+    <ClCompile Include="src\engine\direct3D\WICTextureLoader11.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="direct3d.h">
+    <ClInclude Include="include\engine\direct3D\camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="polygon.h">
+    <ClInclude Include="include\engine\direct3D\cube.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="shader.h">
+    <ClInclude Include="include\engine\direct3D\debug_camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="texture.h">
+    <ClInclude Include="include\engine\direct3D\debug_text.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="sprite.h">
+    <ClInclude Include="include\engine\direct3D\direct3d.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="sprite_anim.h">
+    <ClInclude Include="include\engine\direct3D\DirectXTex.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="system_timer.h">
+    <ClInclude Include="include\engine\direct3D\game.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="WICTextureLoader11.h">
+    <ClInclude Include="include\engine\direct3D\grid.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="debug_text.h">
+    <ClInclude Include="include\engine\direct3D\key_logger.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="mouse.h">
+    <ClInclude Include="include\engine\direct3D\keyboard.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="keyboard.h">
+    <ClInclude Include="include\engine\direct3D\light.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="key_logger.h">
+    <ClInclude Include="include\engine\direct3D\model.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="cube.h">
+    <ClInclude Include="include\engine\direct3D\mouse.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="shader3d.h">
+    <ClInclude Include="include\engine\direct3D\polygon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="grid.h">
+    <ClInclude Include="include\engine\direct3D\shader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="camera.h">
+    <ClInclude Include="include\engine\direct3D\shader3d.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="game.h">
+    <ClInclude Include="include\engine\direct3D\sprite.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="debug_camera.h">
+    <ClInclude Include="include\engine\direct3D\system_timer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="map.h">
+    <ClInclude Include="include\engine\direct3D\texture.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="light.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="model.h">
+    <ClInclude Include="include\engine\direct3D\WICTextureLoader11.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="VertexShader2D.hlsl">
+    <FxCompile Include="shaders\hlsl\PixelShader2D.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
-    <FxCompile Include="PixelShader2D.hlsl">
+    <FxCompile Include="shaders\hlsl\PixelShader3D.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
-    <FxCompile Include="VertexShader3D.hlsl">
+    <FxCompile Include="shaders\hlsl\VertexShader2D.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
-    <FxCompile Include="PixelShader3D.hlsl">
+    <FxCompile Include="shaders\hlsl\VertexShader3D.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
   </ItemGroup>

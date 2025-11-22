@@ -120,7 +120,7 @@ MODEL* ModelLoad( const char *FileName, float scale )
 	}
 
 
-	g_WhiteTexId = Texture_Load(L"white.png"); // サーフェスカラー用
+	g_WhiteTexId = Texture_Load(L"resources/texture/white.png"); // サーフェスカラー用
 
 	return model;
 }

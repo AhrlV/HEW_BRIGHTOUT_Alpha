@@ -17,8 +17,6 @@
 #include "debug_camera.h"
 #include "model.h"
 
-#include "map.h"
-
 using namespace DirectX;
 
 static DebugCamera g_camera({ 0.0f, 1.0f, -5.0f }, { 0.0f, 0.0f, 0.0f });
@@ -29,10 +27,9 @@ void Game_Init()
 {
     Cube_Initialize(Direct3D_GetDevice(), Direct3D_GetDeviceContext());
     Grid_Init(Direct3D_GetDevice(), Direct3D_GetDeviceContext(), 10, 10, 1.0f, 1.0f);
-    Map_Init();
     Light_Init();
 
-    g_pKirby = ModelLoad("kirby.fbx", 0.2f);
+    g_pKirby = ModelLoad("resources/model/kirby.fbx", 0.2f);
 }
 
 void Game_UnInit()
@@ -41,7 +38,6 @@ void Game_UnInit()
 
     Cube_Finalize();
     Grid_UnInit();
-    Map_Init();
     Light_UnInit();
 }
 
@@ -66,9 +62,6 @@ void Game_Draw()
 
     ModelDraw(g_pKirby, XMMatrixIdentity());
 
-
-
-    Map_Draw();
 
     Direct3D_SetDepthTest(false);
 }

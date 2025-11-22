@@ -1019,7 +1019,7 @@ namespace DirectX
 #pragma warning(disable : 4619 4616 4061)
 #endif
 
-#include "DirectXTex.inl"
+#include "external/DirextXTex/DirectXTex.inl"
 
 #ifdef  _MSC_VER
 #pragma warning(pop)

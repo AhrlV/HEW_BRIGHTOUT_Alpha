@@ -2,7 +2,7 @@
 
    シェーダー [shader3d.cpp]
 														 Author : Youhei Sato
-														 Date   : 2025/10/15
+														 Date   :2025/10/15
 --------------------------------------------------------------------------------
 
 ==============================================================================*/
@@ -11,9 +11,11 @@
 using namespace DirectX;
 #include "direct3d.h"
 #include <iostream>
-#include <fstream>
 #include "shader3d.h"
+#include <d3dcompiler.h>
+#include <wrl.h>
 
+using Microsoft::WRL::ComPtr;
 
 static ID3D11VertexShader* g_pVertexShader = nullptr;
 static ID3D11InputLayout* g_pInputLayout = nullptr;
@@ -46,58 +48,42 @@ bool Shader3d_Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	g_pDevice = pDevice;
 	g_pContext = pContext;
 
+	//事前コンパイル済み頂点シェーダーの読み込み（D3DReadFileToBlobを使用）
+	{
+		ComPtr<ID3DBlob> vsBlob;
+		hr = D3DReadFileToBlob(L"shaders//cso//VertexShader3D.cso", &vsBlob);
 
-	// 事前コンパイル済み頂点シェーダーの読み込み
-	std::ifstream ifs_vs("VertexShader3D.cso", std::ios::binary);
+		if (FAILED(hr)) {
+			MessageBox(nullptr, "頂点シェーダーの読み込みに失敗しました\n\nshader_vertex_2d.cso", "エラー", MB_OK);
+			return false;
+		}
 
-	if (!ifs_vs) {
-		MessageBox(nullptr, "頂点シェーダーの読み込みに失敗しました\n\nshader_vertex_2d.cso", "エラー", MB_OK);
-		return false;
+		hr = g_pDevice->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, &g_pVertexShader);
+
+		if (FAILED(hr)) {
+			std::cout << "Shader_Initialize() : 頂点シェーダーの作成に失敗しました" << std::endl;
+			return false;
+		}
+
+		// 頂点レイアウトの定義
+		D3D11_INPUT_ELEMENT_DESC layout[] = {
+			{ "POSITION",0, DXGI_FORMAT_R32G32B32_FLOAT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,0 },
+			{ "COLOR",0, DXGI_FORMAT_R32G32B32A32_FLOAT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,0 },
+			{ "NORMAL",0, DXGI_FORMAT_R32G32B32_FLOAT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,0 },
+			{ "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,0 },
+			{ "TEXUSE",0, DXGI_FORMAT_R32_FLOAT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,0 },
+		};
+
+		UINT num_elements = ARRAYSIZE(layout); // 配列の要素数を取得
+
+		// 頂点レイアウトの作成
+		hr = g_pDevice->CreateInputLayout(layout, num_elements, vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &g_pInputLayout);
+
+		if (FAILED(hr)) {
+			MessageBox(nullptr, "Shader_Initialize() : 頂点レイアウトの作成に失敗しました", "エラー", MB_OK);
+			return false;
+		}
 	}
-
-	// ファイルサイズを取得
-	ifs_vs.seekg(0, std::ios::end); // ファイルポインタを末尾に移動
-	std::streamsize filesize = ifs_vs.tellg(); // ファイルポインタの位置を取得（つまりファイルサイズ）
-	ifs_vs.seekg(0, std::ios::beg); // ファイルポインタを先頭に戻す
-
-	// バイナリデータを格納するためのバッファを確保
-	unsigned char* vsbinary_pointer = new unsigned char[filesize];
-	
-	ifs_vs.read((char*)vsbinary_pointer, filesize); // バイナリデータを読み込む
-	ifs_vs.close(); // ファイルを閉じる
-
-	// 頂点シェーダーの作成
-	hr = g_pDevice->CreateVertexShader(vsbinary_pointer, filesize, nullptr, &g_pVertexShader);
-
-	if (FAILED(hr)) {
-		std::cout << "Shader_Initialize() : 頂点シェーダーの作成に失敗しました" << std::endl;
-		delete[] vsbinary_pointer; // メモリリークしないようにバイナリデータのバッファを解放
-		return false;
-	}
-
-
-	// 頂点レイアウトの定義
-	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT,   0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXUSE",   0, DXGI_FORMAT_R32_FLOAT,          0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-
-
-	UINT num_elements = ARRAYSIZE(layout); // 配列の要素数を取得
-
-	// 頂点レイアウトの作成
-	hr = g_pDevice->CreateInputLayout(layout, num_elements, vsbinary_pointer, filesize, &g_pInputLayout);
-
-	delete[] vsbinary_pointer; // バイナリデータのバッファを解放
-
-	if (FAILED(hr)) {
-		MessageBox(nullptr, "Shader_Initialize() : 頂点レイアウトの作成に失敗しました", "エラー", MB_OK);
-		return false;
-	}
-
 
 	// 頂点シェーダー用定数バッファの作成
 	D3D11_BUFFER_DESC buffer_desc{};
@@ -108,29 +94,22 @@ bool Shader3d_Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	g_pDevice->CreateBuffer(&buffer_desc, nullptr, &g_pVSConstantBuffer1);
 	g_pDevice->CreateBuffer(&buffer_desc, nullptr, &g_pVSConstantBuffer2);
 
-	// 事前コンパイル済みピクセルシェーダーの読み込み
-	std::ifstream ifs_ps("PixelShader3D.cso", std::ios::binary);
-	if (!ifs_ps) {
-		MessageBox(nullptr, "ピクセルシェーダーの読み込みに失敗しました\n\nshader_pixel_2d.cso", "エラー", MB_OK);
-		return false;
-	}
+	//事前コンパイル済みピクセルシェーダーの読み込み（D3DReadFileToBlobを使用）
+	{
+		ComPtr<ID3DBlob> psBlob;
+		hr = D3DReadFileToBlob(L"shaders//cso//PixelShader3D.cso", &psBlob);
 
-	ifs_ps.seekg(0, std::ios::end);
-	filesize = ifs_ps.tellg();
-	ifs_ps.seekg(0, std::ios::beg);
+		if (FAILED(hr)) {
+			MessageBox(nullptr, "ピクセルシェーダーの読み込みに失敗しました\n\nshader_pixel_2d.cso", "エラー", MB_OK);
+			return false;
+		}
 
-	unsigned char* psbinary_pointer = new unsigned char[filesize];
-	ifs_ps.read((char*)psbinary_pointer, filesize);
-	ifs_ps.close();
+		hr = g_pDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &g_pPixelShader);
 
-	// ピクセルシェーダーの作成
-	hr = g_pDevice->CreatePixelShader(psbinary_pointer, filesize, nullptr, &g_pPixelShader);
-
-	delete[] psbinary_pointer; // バイナリデータのバッファを解放
-
-	if (FAILED(hr)) {
-		std::cout << "Shader_Initialize() : ピクセルシェーダーの作成に失敗しました" << std::endl;
-		return false;
+		if (FAILED(hr)) {
+			std::cout << "Shader_Initialize() : ピクセルシェーダーの作成に失敗しました" << std::endl;
+			return false;
+		}
 	}
 
 	// ピクセルシェーダー用定数バッファの作成
@@ -146,15 +125,15 @@ bool Shader3d_Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 
-	sampler_desc.BorderColor[0] = 0.0f;
-	sampler_desc.BorderColor[1] = 0.0f;
-	sampler_desc.BorderColor[2] = 0.0f;
-	sampler_desc.BorderColor[3] = 1.0f;
+	sampler_desc.BorderColor[0] =0.0f;
+	sampler_desc.BorderColor[1] =0.0f;
+	sampler_desc.BorderColor[2] =0.0f;
+	sampler_desc.BorderColor[3] =1.0f;
 
-	sampler_desc.MipLODBias = 0;
-	sampler_desc.MaxAnisotropy = 16;
+	sampler_desc.MipLODBias =0;
+	sampler_desc.MaxAnisotropy =16;
 	sampler_desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	sampler_desc.MinLOD = 0;
+	sampler_desc.MinLOD =0;
 	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	g_pDevice->CreateSamplerState(&sampler_desc, &g_pSamplerState);
@@ -188,7 +167,7 @@ void Shader3d_SetWorldMatrix(const DirectX::XMMATRIX& matrix)
 	XMStoreFloat4x4(&transpose, XMMatrixTranspose(matrix));
 
 	// 定数バッファに行列をセット
-	g_pContext->UpdateSubresource(g_pVSConstantBuffer0, 0, nullptr, &transpose, 0, 0);
+	g_pContext->UpdateSubresource(g_pVSConstantBuffer0,0, nullptr, &transpose,0,0);
 }
 
 void Shader3d_SetViewMatrix(const DirectX::XMMATRIX& matrix)
@@ -200,7 +179,7 @@ void Shader3d_SetViewMatrix(const DirectX::XMMATRIX& matrix)
 	XMStoreFloat4x4(&transpose, XMMatrixTranspose(matrix));
 
 	// 定数バッファに行列をセット
-	g_pContext->UpdateSubresource(g_pVSConstantBuffer1, 0, nullptr, &transpose, 0, 0);
+	g_pContext->UpdateSubresource(g_pVSConstantBuffer1,0, nullptr, &transpose,0,0);
 }
 
 void Shader3d_SetProjectionMatrix(const DirectX::XMMATRIX& matrix)
@@ -212,31 +191,31 @@ void Shader3d_SetProjectionMatrix(const DirectX::XMMATRIX& matrix)
 	XMStoreFloat4x4(&transpose, XMMatrixTranspose(matrix));
 
 	// 定数バッファに行列をセット
-	g_pContext->UpdateSubresource(g_pVSConstantBuffer2, 0, nullptr, &transpose, 0, 0);
+	g_pContext->UpdateSubresource(g_pVSConstantBuffer2,0, nullptr, &transpose,0,0);
 }
 
 void Shader3d_SetMaterialDiffuse(const DirectX::XMFLOAT4 material)
 {
 	// 定数バッファに行列をセット
-	g_pContext->UpdateSubresource(g_pPSConstantBuffer2, 0, nullptr, &material, 0, 0);
+	g_pContext->UpdateSubresource(g_pPSConstantBuffer2,0, nullptr, &material,0,0);
 }
 
 
 void Shader3d_Begin()
 {
 	// 頂点シェーダーとピクセルシェーダーを描画パイプラインに設定
-	g_pContext->VSSetShader(g_pVertexShader, nullptr, 0);
-	g_pContext->PSSetShader(g_pPixelShader, nullptr, 0);
+	g_pContext->VSSetShader(g_pVertexShader, nullptr,0);
+	g_pContext->PSSetShader(g_pPixelShader, nullptr,0);
 
 	// 頂点レイアウトを描画パイプラインに設定
 	g_pContext->IASetInputLayout(g_pInputLayout);
 
 	// 定数バッファを描画パイプラインに設定
-	g_pContext->VSSetConstantBuffers(0, 1, &g_pVSConstantBuffer0);
-	g_pContext->VSSetConstantBuffers(1, 1, &g_pVSConstantBuffer1);
-	g_pContext->VSSetConstantBuffers(2, 1, &g_pVSConstantBuffer2);
-	g_pContext->PSSetConstantBuffers(2, 1, &g_pPSConstantBuffer2);
+	g_pContext->VSSetConstantBuffers(0,1, &g_pVSConstantBuffer0);
+	g_pContext->VSSetConstantBuffers(1,1, &g_pVSConstantBuffer1);
+	g_pContext->VSSetConstantBuffers(2,1, &g_pVSConstantBuffer2);
+	g_pContext->PSSetConstantBuffers(2,1, &g_pPSConstantBuffer2);
 
 	//サンプラーステートを描画パイプラインに設定
-	g_pContext->PSSetSamplers(0, 1, &g_pSamplerState);
+	g_pContext->PSSetSamplers(0,1, &g_pSamplerState);
 }
