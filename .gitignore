@@ -426,3 +426,13 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+
+# Visual Studio logs
+*.log
+*.tlog
+*.wrn
+*.err
+
+# vcpkg specific logs
+vcpkg.applocal.log
