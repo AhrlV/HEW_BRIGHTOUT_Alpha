@@ -47,7 +47,7 @@ MODEL* ModelLoad( const char *FileName, float scale )
 
 				vertex[v].position = XMFLOAT3(mesh->mVertices[v].x * scale, mesh->mVertices[v].y * scale, mesh->mVertices[v].z * scale);
 				vertex[v].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-				vertex[v].normal = XMFLOAT3(mesh->mNormals[v].x, -mesh->mNormals[v].z, mesh->mNormals[v].y);
+				vertex[v].normal = XMFLOAT3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
 				vertex[v].texcoord = XMFLOAT2( mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
 				vertex[v].texuse = 1.0f;
 			}
