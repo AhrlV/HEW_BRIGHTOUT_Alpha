@@ -19,58 +19,74 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\core\main.cpp" />
-    <ClCompile Include="src\engine\direct3D\cube.cpp" />
-    <ClCompile Include="src\engine\direct3D\debug_camera.cpp" />
-    <ClCompile Include="src\engine\direct3D\debug_text.cpp" />
-    <ClCompile Include="src\engine\direct3D\direct3d.cpp" />
-    <ClCompile Include="src\engine\direct3D\game.cpp" />
-    <ClCompile Include="src\engine\direct3D\grid.cpp" />
-    <ClCompile Include="src\engine\direct3D\keyboard.cpp" />
-    <ClCompile Include="src\engine\direct3D\key_logger.cpp" />
-    <ClCompile Include="src\engine\direct3D\light.cpp" />
-    <ClCompile Include="src\engine\direct3D\model.cpp" />
-    <ClCompile Include="src\engine\direct3D\mouse.cpp" />
-    <ClCompile Include="src\engine\direct3D\polygon.cpp" />
-    <ClCompile Include="src\engine\direct3D\shader.cpp" />
-    <ClCompile Include="src\engine\direct3D\shader3d.cpp" />
-    <ClCompile Include="src\engine\direct3D\sprite.cpp" />
-    <ClCompile Include="src\engine\direct3D\system_timer.cpp" />
-    <ClCompile Include="src\engine\direct3D\texture.cpp" />
-    <ClCompile Include="src\engine\direct3D\WICTextureLoader11.cpp" />
+    <ClCompile Include="dev_scene\kageyama.cpp" />
+    <ClCompile Include="src\direct3D\cube.cpp" />
+    <ClCompile Include="src\direct3D\debug_camera.cpp" />
+    <ClCompile Include="src\direct3D\debug_text.cpp" />
+    <ClCompile Include="src\direct3D\direct3d.cpp" />
+    <ClCompile Include="src\direct3D\game.cpp" />
+    <ClCompile Include="src\direct3D\grid.cpp" />
+    <ClCompile Include="src\direct3D\keyboard.cpp" />
+    <ClCompile Include="src\direct3D\key_logger.cpp" />
+    <ClCompile Include="src\direct3D\light.cpp" />
+    <ClCompile Include="src\direct3D\main.cpp" />
+    <ClCompile Include="src\direct3D\model.cpp" />
+    <ClCompile Include="src\direct3D\mouse.cpp" />
+    <ClCompile Include="src\direct3D\polygon.cpp" />
+    <ClCompile Include="src\direct3D\shader.cpp" />
+    <ClCompile Include="src\direct3D\shader3d.cpp" />
+    <ClCompile Include="src\direct3D\sprite.cpp" />
+    <ClCompile Include="src\direct3D\system_timer.cpp" />
+    <ClCompile Include="src\direct3D\texture.cpp" />
+    <ClCompile Include="src\direct3D\WICTextureLoader11.cpp" />
+    <ClCompile Include="src\lifecycle\gameobject.cpp" />
+    <ClCompile Include="src\lifecycle\scene.cpp" />
+    <ClCompile Include="src\lifecycle\world.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\engine\direct3D\camera.h" />
-    <ClInclude Include="include\engine\direct3D\cube.h" />
-    <ClInclude Include="include\engine\direct3D\debug_camera.h" />
-    <ClInclude Include="include\engine\direct3D\debug_text.h" />
-    <ClInclude Include="include\engine\direct3D\direct3d.h" />
-    <ClInclude Include="include\engine\direct3D\DirectXTex.h" />
-    <ClInclude Include="include\engine\direct3D\game.h" />
-    <ClInclude Include="include\engine\direct3D\grid.h" />
-    <ClInclude Include="include\engine\direct3D\keyboard.h" />
-    <ClInclude Include="include\engine\direct3D\key_logger.h" />
-    <ClInclude Include="include\engine\direct3D\light.h" />
-    <ClInclude Include="include\engine\direct3D\model.h" />
-    <ClInclude Include="include\engine\direct3D\mouse.h" />
-    <ClInclude Include="include\engine\direct3D\polygon.h" />
-    <ClInclude Include="include\engine\direct3D\shader.h" />
-    <ClInclude Include="include\engine\direct3D\shader3d.h" />
-    <ClInclude Include="include\engine\direct3D\sprite.h" />
-    <ClInclude Include="include\engine\direct3D\system_timer.h" />
-    <ClInclude Include="include\engine\direct3D\texture.h" />
-    <ClInclude Include="include\engine\direct3D\WICTextureLoader11.h" />
+    <ClInclude Include="include\direct3D\camera.h" />
+    <ClInclude Include="include\direct3D\cube.h" />
+    <ClInclude Include="include\direct3D\debug_camera.h" />
+    <ClInclude Include="include\direct3D\debug_text.h" />
+    <ClInclude Include="include\direct3D\direct3d.h" />
+    <ClInclude Include="include\direct3D\DirectXTex.h" />
+    <ClInclude Include="include\direct3D\game.h" />
+    <ClInclude Include="include\direct3D\grid.h" />
+    <ClInclude Include="include\direct3D\keyboard.h" />
+    <ClInclude Include="include\direct3D\key_logger.h" />
+    <ClInclude Include="include\direct3D\light.h" />
+    <ClInclude Include="include\direct3D\model.h" />
+    <ClInclude Include="include\direct3D\mouse.h" />
+    <ClInclude Include="include\direct3D\polygon.h" />
+    <ClInclude Include="include\direct3D\shader.h" />
+    <ClInclude Include="include\direct3D\shader3d.h" />
+    <ClInclude Include="include\direct3D\sprite.h" />
+    <ClInclude Include="include\direct3D\system_timer.h" />
+    <ClInclude Include="include\direct3D\texture.h" />
+    <ClInclude Include="include\direct3D\WICTextureLoader11.h" />
+    <ClInclude Include="include\lifecycle.h" />
+    <ClInclude Include="include\lifecycle\component.h" />
+    <ClInclude Include="include\lifecycle\gameobject.h" />
+    <ClInclude Include="include\lifecycle\scene.h" />
+    <ClInclude Include="include\lifecycle\time.h" />
+    <ClInclude Include="include\lifecycle\world.h" />
+    <ClInclude Include="include\physics.h" />
+    <ClInclude Include="include\physics\collider.h" />
+    <ClInclude Include="include\physics\physicssystem.h" />
+    <ClInclude Include="include\physics\rigidbody.h" />
+    <ClInclude Include="include\physics\transform.h" />
+    <ClInclude Include="include\scene\kageyama.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\hlsl\PixelShader2D.hlsl">
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shaders\hlsl\PixelShader3D.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
@@ -181,12 +197,13 @@
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\include\engine\direct3D;$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\lib\$(Configuration)\DirectXTex;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -202,14 +219,15 @@ xcopy /Y /D /I "$(ProjectDir)\shaders\cso\*.cso" "$(OutDir)shaders\cso\"</Comman
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions);NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\include\engine\direct3D;$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\lib\$(Configuration)\DirectXTex;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>

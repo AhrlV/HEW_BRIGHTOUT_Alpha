@@ -1,156 +1,230 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="リソース ファイル">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="シェーダーファイル">
-      <UniqueIdentifier>{2a8f1552-2989-46cc-8035-b3cf3409b41b}</UniqueIdentifier>
-      <Extensions>hlsl</Extensions>
+    <Filter Include="シェーダー">
+      <UniqueIdentifier>{00916228-a97a-4c22-9059-75008f053f50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Direct3D">
+      <UniqueIdentifier>{617ec195-6973-441e-92b8-7f7185d5027f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Direct3D\ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Direct3D\ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="LifeCycle">
+      <UniqueIdentifier>{fac2b517-e64d-410f-adf3-1a11c8b34f69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LifeCycle\ヘッダーファイル">
+      <UniqueIdentifier>{870c0610-3221-45fc-b9ed-8e57d8e15613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LifeCycle\ソースファイル">
+      <UniqueIdentifier>{cc3dabe8-111a-4d13-a3da-feffb9a64cb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="開発シーン">
+      <UniqueIdentifier>{8f335912-6b66-4a97-8ab9-e3e58da5d84e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{2db7d675-47b7-44c5-9a8b-80234a3544a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\ソースファイル">
+      <UniqueIdentifier>{286e8595-7949-4938-a2dc-a8506e924ec6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\ヘッダーファイル">
+      <UniqueIdentifier>{1ba06aaf-a080-4db4-b950-c2dc8ff0a6b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{08e39333-8e4e-4f55-973d-00f2c7793cb3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\core\main.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\cube.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\cube.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\debug_camera.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\debug_camera.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\debug_text.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\debug_text.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\direct3d.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\direct3d.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\game.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\game.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\grid.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\grid.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\key_logger.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\key_logger.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\keyboard.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\keyboard.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\light.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\light.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\model.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\model.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\mouse.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\mouse.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\polygon.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\polygon.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\shader.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\shader.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\shader3d.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\shader3d.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\sprite.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\sprite.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\system_timer.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\system_timer.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\texture.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\texture.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="src\direct3D\WICTextureLoader11.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\direct3D\WICTextureLoader11.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="dev_scene\kageyama.cpp">
+      <Filter>開発シーン</Filter>
+    </ClCompile>
+    <ClCompile Include="src\direct3D\main.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lifecycle\gameobject.cpp">
+      <Filter>LifeCycle\ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lifecycle\scene.cpp">
+      <Filter>LifeCycle\ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lifecycle\world.cpp">
+      <Filter>LifeCycle\ソースファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\engine\direct3D\camera.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\camera.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\cube.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\cube.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\debug_camera.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\debug_camera.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\debug_text.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\debug_text.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\direct3d.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\direct3d.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\DirectXTex.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\DirectXTex.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\game.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\game.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\grid.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\grid.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\key_logger.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\key_logger.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\keyboard.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\keyboard.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\light.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\light.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\model.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\model.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\mouse.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\mouse.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\polygon.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\polygon.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\shader.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\shader.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\shader3d.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\shader3d.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\sprite.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\sprite.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\system_timer.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\system_timer.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\texture.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\texture.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\engine\direct3D\WICTextureLoader11.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="include\direct3D\WICTextureLoader11.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\collider.h">
+      <Filter>Physics\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\physicssystem.h">
+      <Filter>Physics\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\rigidbody.h">
+      <Filter>Physics\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\transform.h">
+      <Filter>Physics\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lifecycle\component.h">
+      <Filter>LifeCycle\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lifecycle\gameobject.h">
+      <Filter>LifeCycle\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lifecycle\scene.h">
+      <Filter>LifeCycle\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lifecycle\time.h">
+      <Filter>LifeCycle\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lifecycle\world.h">
+      <Filter>LifeCycle\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lifecycle.h">
+      <Filter>LifeCycle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\kageyama.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\hlsl\PixelShader2D.hlsl">
-      <Filter>シェーダーファイル</Filter>
+      <Filter>シェーダー</Filter>
     </FxCompile>
     <FxCompile Include="shaders\hlsl\PixelShader3D.hlsl">
-      <Filter>シェーダーファイル</Filter>
+      <Filter>シェーダー</Filter>
     </FxCompile>
     <FxCompile Include="shaders\hlsl\VertexShader2D.hlsl">
-      <Filter>シェーダーファイル</Filter>
+      <Filter>シェーダー</Filter>
     </FxCompile>
     <FxCompile Include="shaders\hlsl\VertexShader3D.hlsl">
-      <Filter>シェーダーファイル</Filter>
+      <Filter>シェーダー</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
