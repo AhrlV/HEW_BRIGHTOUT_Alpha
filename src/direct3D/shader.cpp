@@ -1,208 +1,578 @@
-/*==============================================================================
+/*============================================================================================================
 
-   シェーダー [shader.cpp]
-														 Author : Youhei Sato
-														 Date   : 2025/05/15
---------------------------------------------------------------------------------
+    シェーダークラス実装 [shader.cpp]
+    シェーダーの基底クラスと派生クラス（VertexShader、PixelShader）の実装。
 
-==============================================================================*/
-#include <d3d11.h>
-#include <DirectXMath.h>
-using namespace DirectX;
-#include "direct3D/direct3d.h"
-#include <iostream>
-#include <d3dcompiler.h>
-#include <wrl.h>
+    Author : Ryosuke Kageyama
+    Date   : 2025/11/25
 
-using Microsoft::WRL::ComPtr;
+=============================================================================================================*/
 
+#include "direct3D/shader.h"
+#include <fstream>
+#include <stdexcept>
+#include "direct3D/direct3d_device.h"
 
-static ID3D11VertexShader* g_pVertexShader = nullptr;
-static ID3D11InputLayout* g_pInputLayout = nullptr;
+/*============================================================================================================
+    【Shader基底クラス】
+=============================================================================================================*/
 
-static ID3D11Buffer* g_pVSConstantBuffer0 = nullptr;
-static ID3D11Buffer* g_pVSConstantBuffer1 = nullptr;
-
-static ID3D11PixelShader* g_pPixelShader = nullptr;
-static ID3D11SamplerState* g_pSamplerState = nullptr;
-static ID3D11Buffer* g_pPSConstantBuffer = nullptr;
-
-// 注意！初期化で外部から設定されるもの。Release不要。
-static ID3D11Device* g_pDevice = nullptr;
-static ID3D11DeviceContext* g_pContext = nullptr;
-
-
-bool Shader_Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+/*============================================================================================================
+    デフォルトコンストラクタ
+    メンバ変数を初期化する。
+=============================================================================================================*/
+Shader::Shader()
+    : Resource(ResourceClassID::Shader)
+    , m_ShaderType(ShaderType::Unknown)
 {
-	HRESULT hr; // 戻り値格納用
-
-	// デバイスとデバイスコンテキストのチェック
-	if (!pDevice || !pContext) {
-		std::cout << "Shader_Initialize() : 与えられたデバイスかコンテキストが不正です" << std::endl;
-		return false;
-	}
-
-	// デバイスとデバイスコンテキストの保存
-	g_pDevice = pDevice;
-	g_pContext = pContext;
-
-	//事前コンパイル済み頂点シェーダーの読み込み（D3DReadFileToBlobを使用）
-	{
-		ComPtr<ID3DBlob> vsBlob;
-		hr = D3DReadFileToBlob(L"shaders//cso//VertexShader2D.cso", &vsBlob);
-
-		if (FAILED(hr)) {
-			MessageBox(nullptr, "頂点シェーダーの読み込みに失敗しました", "エラー", MB_OK);
-			return false;
-		}
-
-		hr = g_pDevice->CreateVertexShader(
-			vsBlob->GetBufferPointer(),
-			vsBlob->GetBufferSize(),
-			nullptr,
-			&g_pVertexShader
-		);
-
-		if (FAILED(hr)) {
-			std::cout << "Shader_Initialize() : 頂点シェーダーの作成に失敗しました" << std::endl;
-			return false;
-		}
-
-		// 頂点レイアウトの定義
-		D3D11_INPUT_ELEMENT_DESC layout[] = {
-			{ "POSITION",0, DXGI_FORMAT_R32G32B32_FLOAT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,0 },
-			{ "COLOR",0, DXGI_FORMAT_R32G32B32A32_FLOAT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,0 },
-			{ "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,0 },
-		};
-
-		UINT num_elements = ARRAYSIZE(layout); // 配列の要素数を取得
-
-		// 頂点レイアウトの作成（blobを使って作成）
-		hr = g_pDevice->CreateInputLayout(layout, num_elements, vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &g_pInputLayout);
-
-		if (FAILED(hr)) {
-			MessageBox(nullptr, "Shader_Initialize() : 頂点レイアウトの作成に失敗しました", "エラー", MB_OK);
-			return false;
-		}
-	}
-
-	// 頂点シェーダー用定数バッファの作成
-	D3D11_BUFFER_DESC buffer_desc{};
-	buffer_desc.ByteWidth = sizeof(XMFLOAT4X4); // バッファのサイズ
-	buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER; // バインドフラグ
-
-	g_pDevice->CreateBuffer(&buffer_desc, nullptr, &g_pVSConstantBuffer0);
-	g_pDevice->CreateBuffer(&buffer_desc, nullptr, &g_pVSConstantBuffer1);
-
-
-	//事前コンパイル済みピクセルシェーダーの読み込み（D3DReadFileToBlobを使用）
-	{
-		ComPtr<ID3DBlob> psBlob;
-		hr = D3DReadFileToBlob(L"shaders//cso//PixelShader2D.cso", &psBlob);
-
-		if (FAILED(hr)) {
-			MessageBox(nullptr, "ピクセルシェーダーの読み込みに失敗しました\n\nshader_pixel_2d.cso", "エラー", MB_OK);
-			return false;
-		}
-
-		hr = g_pDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &g_pPixelShader);
-
-		if (FAILED(hr)) {
-			std::cout << "Shader_Initialize() : ピクセルシェーダーの作成に失敗しました" << std::endl;
-			return false;
-		}
-	}
-
-	// ピクセルシェーダー用定数バッファの作成
-	buffer_desc.ByteWidth = sizeof(XMFLOAT4); // バッファのサイズ
-	//buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER; // バインドフラグ
-
-	g_pDevice->CreateBuffer(&buffer_desc, nullptr, &g_pPSConstantBuffer);
-
-
-	// サンプラーステート設定
-	D3D11_SAMPLER_DESC sampler_desc{};
-	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-	sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-	sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-
-	sampler_desc.BorderColor[0] =0.0f;
-	sampler_desc.BorderColor[1] =0.0f;
-	sampler_desc.BorderColor[2] =0.0f;
-	sampler_desc.BorderColor[3] =1.0f;
-
-	sampler_desc.MipLODBias =0;
-	sampler_desc.MaxAnisotropy =16;
-	sampler_desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	sampler_desc.MinLOD =0;
-	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-
-	g_pDevice->CreateSamplerState(&sampler_desc, &g_pSamplerState);
-
-
-	return true;
 }
 
-void Shader_Finalize()
+/*============================================================================================================
+    シェーダータイプを指定するコンストラクタ
+    引数:
+      type - シェーダーのタイプ
+=============================================================================================================*/
+Shader::Shader(ShaderType type)
+    : Resource(ResourceClassID::Shader)
+    , m_ShaderType(type)
 {
-	SAFE_RELEASE(g_pVertexShader);
-	SAFE_RELEASE(g_pInputLayout);
-
-	SAFE_RELEASE(g_pVSConstantBuffer0);
-	SAFE_RELEASE(g_pVSConstantBuffer1);
-
-	SAFE_RELEASE(g_pPixelShader);
-	SAFE_RELEASE(g_pSamplerState);
-	SAFE_RELEASE(g_pPSConstantBuffer);
 }
 
-void Shader_SetProjectionMatrix(const DirectX::XMMATRIX& matrix)
+/*============================================================================================================
+    識別名とシェーダータイプを指定するコンストラクタ
+    引数:
+      name - このシェーダーの識別名
+      type - シェーダーのタイプ
+=============================================================================================================*/
+Shader::Shader(const std::wstring& name, ShaderType type)
+    : Resource(name, ResourceClassID::Shader)
+    , m_ShaderType(type)
 {
-	// 定数バッファ格納用行列の構造体を定義
-	XMFLOAT4X4 transpose;
-
-	// 行列を転置して定数バッファ格納用行列に変換
-	XMStoreFloat4x4(&transpose, XMMatrixTranspose(matrix));
-
-	// 定数バッファに行列をセット
-	g_pContext->UpdateSubresource(g_pVSConstantBuffer0,0, nullptr, &transpose,0,0);
 }
 
-void Shader_SetWorldMatrix(const DirectX::XMMATRIX& matrix)
+/*============================================================================================================
+    デストラクタ
+    リソースを解放する。
+=============================================================================================================*/
+Shader::~Shader()
 {
-	// 定数バッファ格納用行列の構造体を定義
-	XMFLOAT4X4 transpose;
-
-	// 行列を転置して定数バッファ格納用行列に変換
-	XMStoreFloat4x4(&transpose, XMMatrixTranspose(matrix));
-
-	// 定数バッファに行列をセット
-	g_pContext->UpdateSubresource(g_pVSConstantBuffer1,0, nullptr, &transpose,0,0);
+    Release();
 }
 
-
-void Shader_SetColor(const XMFLOAT4& color)
+/*============================================================================================================
+    定数バッファを追加する
+    指定されたサイズの定数バッファを作成し、内部リストに追加する。
+    
+    引数:
+      byteWidth - 定数バッファのサイズ（バイト）
+    戻り値: 追加された定数バッファのインデックス
+    例外: 作成に失敗した場合はruntime_error例外をスロー
+=============================================================================================================*/
+size_t Shader::AddConstantBuffer(UINT byteWidth)
 {
-	// 定数バッファに行列をセット
-	g_pContext->UpdateSubresource(g_pPSConstantBuffer,0, nullptr, &color,0,0);
+    // GraphicsDeviceから取得
+    static auto& device = GraphicsDevice::Instance();
+    static auto d3dDevice = device.GetDevice();
+
+    if (!d3dDevice)
+    {
+        throw std::runtime_error("Shader::AddConstantBuffer - デバイスがnullptrです");
+    }
+
+    if (byteWidth == 0)
+    {
+        throw std::runtime_error("Shader::AddConstantBuffer - バッファサイズが0です");
+    }
+
+    if (byteWidth % 16 != 0)
+    {
+        throw std::runtime_error("Shader::AddConstantBuffer - バッファサイズは16バイトの倍数でなければなりません");
+    }
+
+    D3D11_BUFFER_DESC bd{};
+    bd.ByteWidth = byteWidth;
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    bd.CPUAccessFlags = 0;
+    bd.MiscFlags = 0;
+    bd.StructureByteStride = 0;
+
+    Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
+    HRESULT hr = d3dDevice->CreateBuffer(&bd, nullptr, buffer.GetAddressOf());
+
+    if (FAILED(hr))
+    {
+        throw std::runtime_error("Shader::AddConstantBuffer - 定数バッファの作成に失敗しました");
+    }
+
+    m_ConstantBuffers.push_back(buffer);
+
+    return m_ConstantBuffers.size() - 1;
 }
 
-void Shader_Begin()
+/*============================================================================================================
+    定数バッファを取得する
+    指定されたインデックスの定数バッファを取得する。
+    
+    引数:
+      index - 定数バッファのインデックス
+    戻り値: 定数バッファのポインタ（存在しない場合はnullptr）
+=============================================================================================================*/
+ID3D11Buffer* Shader::GetConstantBuffer(size_t index) const
 {
-	// 頂点シェーダーとピクセルシェーダーを描画パイプラインに設定
-	g_pContext->VSSetShader(g_pVertexShader, nullptr,0);
-	g_pContext->PSSetShader(g_pPixelShader, nullptr,0);
+    if (index >= m_ConstantBuffers.size())
+    {
+        return nullptr;
+    }
 
-	// 頂点レイアウトを描画パイプラインに設定
-	g_pContext->IASetInputLayout(g_pInputLayout);
+    return m_ConstantBuffers[index].Get();
+}
 
-	// 定数バッファを描画パイプラインに設定
-	g_pContext->VSSetConstantBuffers(0,1, &g_pVSConstantBuffer0);
-	g_pContext->VSSetConstantBuffers(1,1, &g_pVSConstantBuffer1);
-	g_pContext->PSSetConstantBuffers(0,1, &g_pPSConstantBuffer);
-	
+/*============================================================================================================
+    定数バッファ数を取得する
+    戻り値: 定数バッファの総数
+=============================================================================================================*/
+size_t Shader::GetConstantBufferCount() const
+{
+    return m_ConstantBuffers.size();
+}
 
-	//サンプラーステートを描画パイプラインに設定
-	g_pContext->PSSetSamplers(0,1, &g_pSamplerState);
+/*============================================================================================================
+    定数バッファを更新する
+    指定されたインデックスの定数バッファにデータを書き込む。
+    
+    引数:
+      index - 定数バッファのインデックス
+      data - 更新するデータのポインタ
+    例外: 更新に失敗した場合はruntime_error例外をスロー
+=============================================================================================================*/
+void Shader::UpdateConstantBuffer(size_t index, const void* data)
+{
+    // GraphicsDeviceから取得
+    static auto& device = GraphicsDevice::Instance();
+    static auto context = device.GetContext();
+
+    if (!context)
+    {
+        throw std::runtime_error("Shader::UpdateConstantBuffer - コンテキストがnullptrです");
+    }
+
+    if (!data)
+    {
+        throw std::runtime_error("Shader::UpdateConstantBuffer - データがnullptrです");
+    }
+
+    if (index >= m_ConstantBuffers.size())
+    {
+        throw std::runtime_error("Shader::UpdateConstantBuffer - インデックスが範囲外です");
+    }
+
+    context->UpdateSubresource(m_ConstantBuffers[index].Get(), 0, nullptr, data, 0, 0);
+}
+
+/*============================================================================================================
+    リソースを解放する
+    すべてのシェーダーリソースを解放する。
+=============================================================================================================*/
+void Shader::Release()
+{
+    m_ConstantBuffers.clear();
+    m_Bytecode.clear();
+    m_ShaderType = ShaderType::Unknown;
+}
+
+/*============================================================================================================
+    シェーダータイプを取得する
+    戻り値: シェーダーのタイプ
+=============================================================================================================*/
+ShaderType Shader::GetShaderType() const
+{
+    return m_ShaderType;
+}
+
+/*============================================================================================================
+    シェーダーバイトコードを取得する
+    戻り値: シェーダーバイトコード
+=============================================================================================================*/
+const std::vector<uint8_t>& Shader::GetBytecode() const
+{
+    return m_Bytecode;
+}
+
+/*============================================================================================================
+    シェーダーファイル（.cso）を読み込む
+    コンパイル済みシェーダーファイルをバイナリとして読み込む。
+    
+    引数:
+      filename - シェーダーファイルのパス
+      bytecode - 読み込んだバイトコードを格納するベクター
+    例外: 読み込みに失敗した場合はruntime_error例外をスロー
+=============================================================================================================*/
+void Shader::LoadShaderFile(const std::wstring& filename, std::vector<uint8_t>& bytecode)
+{
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    if (!file.is_open())
+    {
+        throw std::runtime_error("Shader::LoadShaderFile - ファイルを開けませんでした");
+    }
+
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    if (size <= 0)
+    {
+        throw std::runtime_error("Shader::LoadShaderFile - ファイルが空です");
+    }
+
+    bytecode.resize(static_cast<size_t>(size));
+    if (!file.read(reinterpret_cast<char*>(bytecode.data()), size))
+    {
+        throw std::runtime_error("Shader::LoadShaderFile - ファイルの読み込みに失敗しました");
+    }
+
+    file.close();
+}
+
+/*============================================================================================================
+    【VertexShader派生クラス】
+=============================================================================================================*/
+
+/*============================================================================================================
+    デフォルトコンストラクタ
+    メンバ変数を初期化する。
+=============================================================================================================*/
+VertexShader::VertexShader()
+    : Shader(ShaderType::Vertex)
+    , m_VertexShader(nullptr)
+    , m_InputLayout(nullptr)
+{
+}
+
+/*============================================================================================================
+    識別名を指定するコンストラクタ
+    引数:
+      name - この頂点シェーダーの識別名
+=============================================================================================================*/
+VertexShader::VertexShader(const std::wstring& name)
+    : Shader(name, ShaderType::Vertex)
+    , m_VertexShader(nullptr)
+    , m_InputLayout(nullptr)
+{
+}
+
+/*============================================================================================================
+    デストラクタ
+    リソースを解放する。
+=============================================================================================================*/
+VertexShader::~VertexShader()
+{
+    m_VertexShader.Reset();
+    m_InputLayout.Reset();
+}
+
+/*============================================================================================================
+    頂点シェーダーとして初期化
+    シェーダーファイル（.cso）を読み込み、頂点シェーダーと入力レイアウトを作成する。
+    
+    引数:
+      filename - シェーダーファイルのパス
+      inputLayout - 入力レイアウト記述の配列
+    戻り値: 初期化に成功した場合true
+    例外: 初期化に失敗した場合はruntime_error例外をスロー
+=============================================================================================================*/
+bool VertexShader::Initialize(
+    const std::wstring& filename,
+    const std::vector<D3D11_INPUT_ELEMENT_DESC>& inputLayout)
+{
+    // GraphicsDeviceから取得
+    static auto& device = GraphicsDevice::Instance();
+    static auto d3dDevice = device.GetDevice();
+
+    if (!d3dDevice)
+    {
+        throw std::runtime_error("VertexShader::Initialize - デバイスがnullptrです");
+    }
+
+    if (filename.empty())
+    {
+        throw std::runtime_error("VertexShader::Initialize - ファイル名が空です");
+    }
+
+    if (inputLayout.empty())
+    {
+        throw std::runtime_error("VertexShader::Initialize - 入力レイアウトが空です");
+    }
+
+    LoadShaderFile(filename, m_Bytecode);
+
+    HRESULT hr = d3dDevice->CreateVertexShader(
+        m_Bytecode.data(),
+        m_Bytecode.size(),
+        nullptr,
+        m_VertexShader.GetAddressOf()
+    );
+
+    if (FAILED(hr))
+    {
+        throw std::runtime_error("VertexShader::Initialize - 頂点シェーダーの作成に失敗しました");
+    }
+
+    hr = d3dDevice->CreateInputLayout(
+        inputLayout.data(),
+        static_cast<UINT>(inputLayout.size()),
+        m_Bytecode.data(),
+        m_Bytecode.size(),
+        m_InputLayout.GetAddressOf()
+    );
+
+    if (FAILED(hr))
+    {
+        throw std::runtime_error("VertexShader::Initialize - 入力レイアウトの作成に失敗しました");
+    }
+
+    return true;
+}
+
+/*============================================================================================================
+    シェーダーをパイプラインに設定する
+    頂点シェーダーと入力レイアウトをパイプラインに設定する。
+    
+    引数:
+    例外: 設定に失敗した場合はruntime_error例外をスロー
+=============================================================================================================*/
+void VertexShader::SetToContext()
+{
+    // GraphicsDeviceから取得
+    static auto& device = GraphicsDevice::Instance();
+    static auto context = device.GetContext();
+
+    if (!context)
+    {
+        throw std::runtime_error("VertexShader::SetToContext - コンテキストがnullptrです");
+    }
+
+    if (!m_VertexShader)
+    {
+        throw std::runtime_error("VertexShader::SetToContext - 頂点シェーダーが無効です");
+    }
+
+    context->VSSetShader(m_VertexShader.Get(), nullptr, 0);
+    
+    if (m_InputLayout)
+    {
+        context->IASetInputLayout(m_InputLayout.Get());
+    }
+}
+
+/*============================================================================================================
+    定数バッファをシェーダーに設定する
+    定数バッファを頂点シェーダーに設定する。
+    
+    引数:
+      startSlot - 開始スロット番号
+=============================================================================================================*/
+void VertexShader::SetConstantBuffers(UINT startSlot)
+{
+    // GraphicsDeviceから取得
+    static auto& device = GraphicsDevice::Instance();
+    static auto context = device.GetContext();
+
+    if (!context)
+    {
+        throw std::runtime_error("VertexShader::SetConstantBuffers - コンテキストがnullptrです");
+    }
+
+    if (m_ConstantBuffers.empty())
+    {
+        return;
+    }
+
+    std::vector<ID3D11Buffer*> buffers;
+    buffers.reserve(m_ConstantBuffers.size());
+    for (const auto& cb : m_ConstantBuffers)
+    {
+        buffers.push_back(cb.Get());
+    }
+
+    context->VSSetConstantBuffers(startSlot, static_cast<UINT>(buffers.size()), buffers.data());
+}
+
+/*============================================================================================================
+    リソースが有効かどうかを判定する
+    戻り値: 頂点シェーダーが有効な場合true
+=============================================================================================================*/
+bool VertexShader::IsValid() const
+{
+    return m_VertexShader.Get() != nullptr;
+}
+
+/*============================================================================================================
+    頂点シェーダーを取得する
+    戻り値: 頂点シェーダーのポインタ
+=============================================================================================================*/
+ID3D11VertexShader* VertexShader::GetVertexShader() const
+{
+    return m_VertexShader.Get();
+}
+
+/*============================================================================================================
+    入力レイアウトを取得する
+    戻り値: 入力レイアウトのポインタ
+=============================================================================================================*/
+ID3D11InputLayout* VertexShader::GetInputLayout() const
+{
+    return m_InputLayout.Get();
+}
+
+/*============================================================================================================
+    【PixelShader派生クラス】
+=============================================================================================================*/
+
+/*============================================================================================================
+    デフォルトコンストラクタ
+    メンバ変数を初期化する。
+=============================================================================================================*/
+PixelShader::PixelShader()
+    : Shader(ShaderType::Pixel)
+    , m_PixelShader(nullptr)
+{
+}
+
+/*============================================================================================================
+    識別名を指定するコンストラクタ
+    引数:
+      name - このピクセルシェーダーの識別名
+=============================================================================================================*/
+PixelShader::PixelShader(const std::wstring& name)
+    : Shader(name, ShaderType::Pixel)
+    , m_PixelShader(nullptr)
+{
+}
+
+/*============================================================================================================
+    デストラクタ
+    リソースを解放する。
+=============================================================================================================*/
+PixelShader::~PixelShader()
+{
+    m_PixelShader.Reset();
+}
+
+/*============================================================================================================
+    ピクセルシェーダーとして初期化
+    シェーダーファイル（.cso）を読み込み、ピクセルシェーダーを作成する。
+    
+    引数:
+      filename - シェーダーファイルのパス
+    戻り値: 初期化に成功した場合true
+    例外: 初期化に失敗した場合はruntime_error例外をスロー
+=============================================================================================================*/
+bool PixelShader::Initialize(
+    const std::wstring& filename)
+{
+    // GraphicsDeviceから取得
+    static auto& device = GraphicsDevice::Instance();
+    static auto d3dDevice = device.GetDevice();
+
+    if (!d3dDevice)
+    {
+        throw std::runtime_error("PixelShader::Initialize - デバイスがnullptrです");
+    }
+
+    if (filename.empty())
+    {
+        throw std::runtime_error("PixelShader::Initialize - ファイル名が空です");
+    }
+
+    LoadShaderFile(filename, m_Bytecode);
+
+    HRESULT hr = d3dDevice->CreatePixelShader(
+        m_Bytecode.data(),
+        m_Bytecode.size(),
+        nullptr,
+        m_PixelShader.GetAddressOf()
+    );
+
+    if (FAILED(hr))
+    {
+        throw std::runtime_error("PixelShader::Initialize - ピクセルシェーダーの作成に失敗しました");
+    }
+
+    return true;
+}
+
+/*============================================================================================================
+    シェーダーをパイプラインに設定する
+    ピクセルシェーダーをパイプラインに設定する。
+    
+    例外: 設定に失敗した場合はruntime_error例外をスロー
+=============================================================================================================*/
+void PixelShader::SetToContext()
+{
+    // GraphicsDeviceから取得
+    static auto& device = GraphicsDevice::Instance();
+    static auto context = device.GetContext();
+
+    if (!context)
+    {
+        throw std::runtime_error("PixelShader::SetToContext - コンテキストがnullptrです");
+    }
+
+    if (!m_PixelShader)
+    {
+        throw std::runtime_error("PixelShader::SetToContext - ピクセルシェーダーが無効です");
+    }
+
+    context->PSSetShader(m_PixelShader.Get(), nullptr, 0);
+}
+
+/*============================================================================================================
+    定数バッファをシェーダーに設定する
+    定数バッファをピクセルシェーダーに設定する。
+    
+    引数:
+      startSlot - 開始スロット番号
+=============================================================================================================*/
+void PixelShader::SetConstantBuffers(UINT startSlot)
+{
+    // GraphicsDeviceから取得
+    static auto& device = GraphicsDevice::Instance();
+    static auto context = device.GetContext();
+
+    if (!context)
+    {
+        throw std::runtime_error("PixelShader::SetConstantBuffers - コンテキストがnullptrです");
+    }
+
+    if (m_ConstantBuffers.empty())
+    {
+        return;
+    }
+
+    std::vector<ID3D11Buffer*> buffers;
+    buffers.reserve(m_ConstantBuffers.size());
+    for (const auto& cb : m_ConstantBuffers)
+    {
+        buffers.push_back(cb.Get());
+    }
+
+    context->PSSetConstantBuffers(startSlot, static_cast<UINT>(buffers.size()), buffers.data());
+}
+
+/*============================================================================================================
+    リソースが有効かどうかを判定する
+    戻り値: ピクセルシェーダーが有効な場合true
+=============================================================================================================*/
+bool PixelShader::IsValid() const
+{
+    return m_PixelShader.Get() != nullptr;
+}
+
+/*============================================================================================================
+    ピクセルシェーダーを取得する
+    戻り値: ピクセルシェーダーのポインタ
+=============================================================================================================*/
+ID3D11PixelShader* PixelShader::GetPixelShader() const
+{
+    return m_PixelShader.Get();
 }

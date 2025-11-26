@@ -1,111 +1,174 @@
-#ifndef GAMEOBJECT_H
-#define GAMEOBJECT_H
 /*====================================================================
 
-
 	GameObjectクラス [gameobject.h]
+	ゲーム内のエンティティ。Componentのコンテナとして機能。
+	Objectクラスを継承し、IDとアクティブフラグを持つ。
+	自身が属するSceneへの参照を保持する。
 
-								Author : Ryosuke Kageyama
-								Date   : 2025/11/18
+	Author : Ryosuke Kageyama
+	Date   : 2025/11/26
+
 ====================================================================*/
 
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
+
+#include "lifecycle/object.h"
+#include "component.h"
 #include <vector>
 #include <memory>
 #include <type_traits>
 #include <unordered_set>
-#include "component.h"
 
-class GameObject 
+// 前方宣言
+class Scene;
+
+/*====================================================================
+	GameObjectクラス
+	ゲーム内のエンティティ。
+	複数のComponentを持ち、シーンの階層構造の一部となる。
+====================================================================*/
+class GameObject : public Object
 {
-
 private:
-	// 所有するComponentのvector（更新はこれを走査）
-    std::vector<std::unique_ptr<Component>> m_Components;
+	// 自身が属しているScene
+	Scene* m_Scene;
 
-	// 新規追加されたComponentを追跡するためのvector
-    std::vector<Component*> m_AddedComponents;
+	// 所有するコンポーネント
+	std::vector<std::unique_ptr<Component>> m_Components;
 
-	// Startが呼ばれたComponentを追跡するためのset
-    std::unordered_set<Component*> m_StartedComponents;
+	// 追加されたばかりの未 Awake コンポーネント
+	std::vector<Component*> m_AddedComponents;
 
-    // このGameObject自身の有効/無効
-    bool m_ActiveSelf = true;
+	// Start 済み集合
+	std::unordered_set<Component*> m_StartedComponents;
+
+	// 自身のアクティブフラグ
+	bool m_ActiveSelf;
+
 
 public:
-    GameObject();
-    virtual ~GameObject();
 
-    // static Create() は廃止。コンストラクタ内で登録する。
+	// コンストラクタ
+	GameObject();
+	// デストラクタ
+	virtual ~GameObject() = default;
 
-    // 有効/無効の設定・取得
-    void SetActive(bool active);
-    bool IsActiveSelf() const;
-    // 階層が無いので現状は自己フラグに等しい。親子を導入したら伝播を考慮。
-    bool IsActiveInHierarchy() const;
+	// 所属するSceneを取得
+	Scene* GetScene() const;
 
-	// まだAwakeが呼ばれていない新規追加Componentに対してAwakeを呼び出す
-    void AwakeNewComponents();
+	// アクティブ状態の設定・取得
+	void SetActiveSelf(bool active);
+	bool IsActiveSelf() const;
+	bool IsActiveInHierarchy() const;
 
-	// まだStartが呼ばれていないComponentに対してStartを呼び出す
-    void StartNewComponents();
+	// ライフサイクル処理
+	void AwakeNewComponents();
+	void StartNewComponents();
+	void Update();
+	void LateUpdate();
+	void FixedUpdate();
 
-	// 全てのComponentに対してライフサイクルメソッドを呼び出す
-    void Update();
-    void LateUpdate();
-    void FixedUpdate();
+	// Component追加メソッド（可変引数テンプレート）
+	template <typename T, typename... Args>
+	requires std::is_base_of<Component, T>::value
+	T* AddComponent(Args&&... args);
 
-	// 全てのComponentに対してRenderを呼び出す
-    void Render();
+	// Component取得メソッド（単体）
+	template <typename T>
+	[[nodiscard]] T* GetComponent() const;
 
+	// Component取得メソッド（複数）
+	template <typename T>
+	[[nodiscard]] std::vector<T*> GetComponents() const;
 
-
-    // ComponentをGameObjectに追加するテンプレートメソッド
-    template <typename T, typename... Args>
-    T* AddComponent(Args&&... args)
-    {
-        // コンパイル時にTがComponentを継承していることを確認
-        static_assert(std::is_base_of<Component, T>::value, "Component継承している型を指定してください");
-
-        // Componentを生成
-        auto comp = std::make_unique<T>(std::forward<Args>(args)...);
-
-        // unique_ptrから生ポインタを取得
-        T* raw = comp.get();
-
-        // Componentの所有者を設定
-        raw->m_Owner = this;
-
-        // emplace_backを使いコピーを避けてComponentを追加
-        m_Components.emplace_back(std::move(comp));
-
-        // 新規追加されたComponentを追跡
-        m_AddedComponents.push_back(raw);
-
-        return raw;
-    }
-
-    // 指定した型のComponentを取得するテンプレートメソッド
-    template <typename T>
-    [[nodiscard]] T* GetComponent() const
-    {
-        for (auto& c : m_Components) {
-            // dynamic_castを使って型をチェック
-            if (auto casted = dynamic_cast<T*>(c.get())) return casted;
-        }
-        return nullptr;
-    }
-
-    // 指定した型の全てのComponentを取得するテンプレートメソッド
-    template <typename T>
-    [[nodiscard]] std::vector<T*> GetComponents() const
-    {
-        std::vector<T*> results;
-        for (auto& c : m_Components) {
-            if (auto casted = dynamic_cast<T*>(c.get())) results.push_back(casted);
-        }
-        // 空でも空配列を返す
-        return results;
-    }
+	friend class Scene;
 };
 
-#endif
+// テンプレートメソッドの実装
+// Scene.hをインクルードして、RegisterComponentを呼べるようにする
+#include "lifecycle/scene.h"
+
+/*====================================================================
+	Componentを追加する
+	新しいComponentを作成し、GameObjectに追加する。
+	Sceneに登録済みの場合は、次のフレームでAwakeが呼ばれる。
+	
+	テンプレート引数:
+	  T - 追加するComponentの型
+	  Args - Componentのコンストラクタ引数
+	引数:
+	  args - Componentのコンストラクタに渡す引数
+	戻り値: 追加されたComponentのポインタ
+====================================================================*/
+template <typename T, typename... Args>
+requires std::is_base_of<Component, T>::value
+T* GameObject::AddComponent(Args&&... args)
+{
+	// Componentを作成
+	auto comp = std::make_unique<T>(std::forward<Args>(args)...);
+	T* raw = comp.get();
+
+	// オーナーを設定
+	raw->m_Owner = this;
+
+	// コンポーネントリストに追加
+	m_Components.emplace_back(std::move(comp));
+
+	// 新規追加リストに追加（Awake待ち）
+	m_AddedComponents.push_back(raw);
+
+	// Sceneに登録済みの場合は、Sceneのコンポーネントマップに登録
+	// （まだSceneに登録されていない場合は、ProcessAwakeで登録される）
+	if(m_Scene)
+	{
+		m_Scene->RegisterComponent(raw, this);
+	}
+
+	return raw;
+}
+
+/*====================================================================
+	指定した型のComponentを取得する（単体）
+	最初に見つかったComponentを返す。
+	
+	テンプレート引数:
+	  T - 取得するComponentの型
+	戻り値: 見つかったComponent（存在しない場合はnullptr）
+====================================================================*/
+template <typename T>
+[[nodiscard]] T* GameObject::GetComponent() const
+{
+	for (auto& c : m_Components)
+	{
+		if (auto casted = dynamic_cast<T*>(c.get()))
+		{
+			return casted;
+		}
+	}
+	return nullptr;
+}
+
+/*====================================================================
+	指定した型のComponentを取得する（複数）
+	該当する全てのComponentを返す。
+	
+	テンプレート引数:
+	  T - 取得するComponentの型
+	戻り値: 見つかったComponentのリスト
+====================================================================*/
+template <typename T>
+[[nodiscard]] std::vector<T*> GameObject::GetComponents() const
+{
+	std::vector<T*> results;
+	for (auto& c : m_Components)
+	{
+		if (auto casted = dynamic_cast<T*>(c.get()))
+		{
+			results.push_back(casted);
+		}
+	}
+	return results;
+}
+
+#endif // GAMEOBJECT_H

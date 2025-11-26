@@ -10,33 +10,23 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
+#include <DirectXMath.h>
 #include "lifecycle/component.h"
 
-// 3Dベクトル(簡易的)
-class Vector3
-{
-public:
-	float x = 0.0f;
-	float y = 0.0f;
-	float z = 0.0f;
-};
-// クォータニオン(簡易的)
-class Quaternion
-{
-public:
-	float x = 0.0f;
-	float y = 0.0f;
-	float z = 0.0f;
-};
-
-// Transformコンポーネント(親子関係は未実装)
 class TransForm : public Component
 {
 public:
-	Vector3 position;
-	Quaternion rotation;
-	Vector3 scale;
-};
+	DirectX::XMFLOAT3 Position{0,0,0};
+	DirectX::XMFLOAT3 RotationEuler{0,0,0}; // radians
+	DirectX::XMFLOAT3 Scale{1,1,1};
 
+	DirectX::XMMATRIX GetWorldMatrix() const
+	{
+		DirectX::XMMATRIX S = DirectX::XMMatrixScaling(Scale.x,Scale.y,Scale.z);
+		DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(RotationEuler.x,RotationEuler.y,RotationEuler.z);
+		DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(Position.x,Position.y,Position.z);
+		return S*R*T;
+	}
+};
 
 #endif // TRANSFORM_H

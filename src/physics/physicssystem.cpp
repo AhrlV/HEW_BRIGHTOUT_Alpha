@@ -1,22 +1,22 @@
-/*====================================================================
 
-	PhysicsSystem 実装 [physicssystem.cpp]
 
-	Author : Ryosuke Kageyama
-	Date   : 2025/11/19
-====================================================================*/
 
-#include "engine/lifecycle/lifecycle.h"
+#include "physics/physicssystem.h"
+#include "lifecycle/scene.h"
+#include "physics/rigidbody.h"
+#include "physics/collider.h"
+#include "physics/transform.h"
+#include "lifecycle/world.h"
+#include <vector>
 
-// 個別物理更新 (簡易的なプレースホルダー)
-void PhysicsSystem::StepRigidbody(Rigidbody* rb)
+void PhysicsSystem::PhsicsUpdate()
 {
-    if (!rb || !rb->IsActive()) return;
-    // TODO: 速度積分など
-}
+	Scene* scene = World::Instance().GetActiveScene();
 
-void PhysicsSystem::StepCollider(Collider* col)
-{
-    if (!col || !col->IsActive()) return;
-    // TODO: 衝突形状の更新など
+	// Collider/Rigidbodyコンポーネントを持つ全GameObjectを取得
+	std::vector<Collider*> colliders = scene->GetComponentsByType<Collider>();
+	std::vector<Rigidbody*> rigidbodies = scene->GetComponentsByType<Rigidbody>();
+
+
+	// TODO: コリジョン判定・解決などをここに追加
 }
