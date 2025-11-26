@@ -1,34 +1,121 @@
+/*============================================================================================================
 
+    モデルクラス [model.h]
+    3Dモデルを表すResourceクラス。
+    MeshとMaterialの組み合わせを管理する。
+
+    Author : Ryosuke Kageyama
+    Date   : 2025/11/26
+
+=============================================================================================================*/
 #ifndef MODEL_H
 #define MODEL_H
 
-
-#include <unordered_map>
+#include <vector>
+#include <memory>
 #include <d3d11.h>
-#include <DirectXMath.h>
+#include "direct3D/resource.h"
 
-#include "assimp/cimport.h"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
-#include "assimp/matrix4x4.h"
-#pragma comment (lib, "assimp/assimp-vc143-mt.lib")
+// 前方宣言
+class Mesh;
+class Material;
 
-
-
-struct MODEL
+/*============================================================================================================
+    Modelクラス
+    3Dモデルを表すリソースクラス。
+    複数のMeshとMaterialのペアを保持する。
+    Resourceクラスを継承し、ResourceManagerによる一元管理が可能。
+=============================================================================================================*/
+class Model : public Resource
 {
-	const aiScene* AiScene = nullptr;
+public:
+	/*========================================================================================================
+		コンストラクタ・デストラクタ
+	========================================================================================================*/
+	
+	// デフォルトコンストラクタ
+	Model();
+	
+	// 識別名を指定するコンストラクタ
+	// 引数:
+	//   name - このモデルの識別名（ファイル名やキャッシュキーなど）
+	explicit Model(const std::wstring& name);
+	
+	// デストラクタ
+	~Model() override;
 
-	ID3D11Buffer** VertexBuffer;
-	ID3D11Buffer** IndexBuffer;
+	/*========================================================================================================
+		初期化
+	========================================================================================================*/
+	
+	// モデルの初期化
+	// 引数:
+	//   filename - モデルファイルのパス
+	// 戻り値: 初期化に成功した場合true
+	// 例外: 初期化に失敗した場合はruntime_errorをスロー
+	bool Initialize(const std::wstring& filename);
 
-	std::unordered_map<std::string, ID3D11ShaderResourceView*> Texture;
+	/*========================================================================================================
+		Resource基底クラスのオーバーライド
+	========================================================================================================*/
+	
+	// リソースを解放する
+	void Release() override;
+	
+	// リソースが有効かどうかを判定する
+	// 戻り値: モデルが有効な場合true
+	bool IsValid() const override;
+
+	/*========================================================================================================
+		メッシュとマテリアルの管理
+	========================================================================================================*/
+	
+	// メッシュとマテリアルのペアを追加する
+	// 引数:
+	//   mesh - 追加するメッシュ
+	//   material - 追加するマテリアル
+	void AddMeshMaterialPair(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material);
+	
+	// メッシュとマテリアルのペア数を取得する
+	// 戻り値: ペアの数
+	size_t GetPairCount() const;
+	
+	// 指定されたインデックスのメッシュを取得する
+	// 引数:
+	//   index - インデックス
+	// 戻り値: メッシュのshared_ptr
+	std::shared_ptr<Mesh> GetMesh(size_t index) const;
+	
+	// 指定されたインデックスのマテリアルを取得する
+	// 引数:
+	//   index - インデックス
+	// 戻り値: マテリアルのshared_ptr
+	std::shared_ptr<Material> GetMaterial(size_t index) const;
+
+private:
+	/*========================================================================================================
+		内部データ構造
+	========================================================================================================*/
+	
+	// メッシュとマテリアルのペア
+	struct MeshMaterialPair
+	{
+		std::shared_ptr<Mesh> mesh;
+		std::shared_ptr<Material> material;
+	};
+
+	// メッシュとマテリアルのペアのリスト
+	std::vector<MeshMaterialPair> m_MeshMaterialPairs;
+
+	/*========================================================================================================
+		内部ヘルパー関数
+	========================================================================================================*/
+	
+	// モデルファイルからインポートする（プレースホルダー）
+	// 引数:
+	//   filename - モデルファイルのパス
+	// 例外: インポートに失敗した場合はruntime_errorをスロー
+	void ImportFromFile(const std::wstring& filename);
 };
 
-
-MODEL* ModelLoad(const char* FileName, float scale);
-void ModelRelease(MODEL* model);
-
-void ModelDraw(const MODEL* model, const DirectX::XMMATRIX& mtxWorld);
-
-#endif
+#endif // MODEL_H

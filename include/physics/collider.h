@@ -9,16 +9,13 @@
 ====================================================================*/
 
 #include "lifecycle/component.h"
-#include "physics/physicssystem.h"
 
 class Collider : public Component
 {
 public:
-	// ¶¬/”j‰ó‚ÉPhysicsSystem‚Ö“o˜^/“o˜^‰ğœ
-    Collider() { PhysicsSystem::Instance().RegisterCollider(this); }
-    virtual ~Collider() override { PhysicsSystem::Instance().UnregisterCollider(this); }
+    Collider();
+    virtual ~Collider();
 private:
-    friend class PhysicsSystem; // •¨—XV‚ÌŒÄ‚Ño‚µ‚ğ‹–‰Â
 };
 
 #endif

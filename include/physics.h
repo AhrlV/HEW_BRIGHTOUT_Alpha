@@ -1,4 +1,3 @@
-
 /*====================================================================
 
     物理エンジンのヘッダーまとめ [physics.h]
@@ -16,8 +15,5 @@
 #include "physics/rigidbody.h"
 #include "physics/physicssystem.h"
 #include "physics/transform.h"
-
-
-using namespace World;
 
 #endif

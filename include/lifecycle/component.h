@@ -1,49 +1,62 @@
-#ifndef COMPONENT_H
-#define COMPONENT_H
 /*====================================================================
 
-
 	Component [component.h]
+	GameObjectに付与される機能の基底クラス。
+	Objectクラスを継承し、アクティブフラグとIDを持つ。
 
-									Author : Ryosuke Kageyama
-									Date   : 2025/11/18
+	Author : Ryosuke Kageyama
+	Date   : 2025/11/26
+
 ====================================================================*/
 
-class GameObject;
-class PhysicsSystem; // 物理呼び出し制限用
+#ifndef COMPONENT_H
+#define COMPONENT_H
 
-class Component
+#include "lifecycle/object.h"
+
+
+class GameObject;
+class PhysicsSystem;
+class Scene;
+
+/*====================================================================
+	Componentクラス
+	GameObjectに付与される機能の基底クラス。
+	Objectを継承し、ライフサイクルメソッドを提供する。
+====================================================================*/
+class Component : public Object
 {
 protected:
-	// このComponentを所有するGameObjectへのポインタ
-	GameObject* m_Owner = nullptr;
-
-	// このComponent自体の有効/無効（GameObjectとは独立したフラグ）
-	bool m_Active = true;
+	// このComponentが所属するGameObjectへのポインタ
+	GameObject* m_Owner;
 
 public:
-	Component() = default;
-	virtual ~Component() = default;
+	// コンストラクタ
+	Component();
+
+	// デストラクタ
+	virtual ~Component();
 
 	// Unityのようなライフサイクルメソッド
 	virtual void Awake() {}
 	virtual void Start() {}
 	virtual void Update() {}
 	virtual void LateUpdate() {}
-	// 固定更新と描画
 	virtual void FixedUpdate() {}
-	virtual void Render() {}
 
-public:
-	// 有効/無効の設定・取得（Component 自身のフラグ）
-	inline void SetActive(bool active) { m_Active = active; }
-	inline bool IsActive() const { return m_Active; }
+	// 所属するGameObjectを取得するメソッド
+	GameObject* GetGameObject() const;
+	const GameObject* GetGameObjectConst() const;
 
-	// 所有するGameObjectを取得するメソッド
-	const GameObject* GetGameObject() const { return m_Owner; }
+	void SetGameObject(GameObject* owner);
 
-	// GameObject/PhysicsSystemが内部にアクセスできるように
+	// 所属するSceneを取得するメソッド
+	Scene* GetScene() const;
+
+	// GameObject/PhysicsSystem/Sceneから内部にアクセスできるようにする
 	friend class GameObject;
+	friend class Scene;
+	friend class PhysicsSystem;
 };
 
-#endif
+#endif // COMPONENT_H

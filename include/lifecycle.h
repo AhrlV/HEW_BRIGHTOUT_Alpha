@@ -1,4 +1,3 @@
-
 /*====================================================================
 
     ライフサイクルシステムのヘッダーまとめ [lifecycle.h]
@@ -17,8 +16,5 @@
 #include "lifecycle/gameobject.h"
 #include "lifecycle/component.h"
 #include "lifecycle/time.h"
-
-
-using namespace World;
 
 #endif

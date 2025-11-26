@@ -1,202 +1,151 @@
+/*============================================================================================================
 
-#include "direct3D/direct3d.h"
+    モデルクラス実装 [model.cpp]
+    3Dモデルリソースの実装。
+
+    Author : Ryosuke Kageyama
+    Date   : 2025/11/26
+
+=============================================================================================================*/
 #include "direct3D/model.h"
-using namespace DirectX;
-#include "direct3D/WICTextureLoader11.h"
-#include "direct3D/DirectXTex.h"
-#include "direct3D/shader3d.h"
-#include "direct3D/texture.h"
+#include "direct3D/mesh.h"
+#include "direct3D/material.h"
+#include <stdexcept>
 
-// 頂点構造体
-struct Vertex3d
+/*========================================================================================================
+	デフォルトコンストラクタ
+	空のモデルを作成する。
+========================================================================================================*/
+Model::Model()
+	: Resource(ResourceClassID::Model)
 {
-	XMFLOAT3 position; // 頂点座標
-	XMFLOAT4 color;    // カラー
-	XMFLOAT3 normal;
-	XMFLOAT2 texcoord; // テクスチャ座標
-	float texuse = 1.0f;
-};
-
-static unsigned int g_WhiteTexId;
-
-
-MODEL* ModelLoad( const char *FileName, float scale )
-{
-	MODEL* model = new MODEL;
-
-
-	const std::string modelPath( FileName );
-
-	model->AiScene = aiImportFile(FileName, aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded);
-	assert(model->AiScene);
-
-	model->VertexBuffer = new ID3D11Buffer*[model->AiScene->mNumMeshes];
-	model->IndexBuffer = new ID3D11Buffer*[model->AiScene->mNumMeshes];
-
-
-	for (unsigned int m = 0; m < model->AiScene->mNumMeshes; m++)
-	{
-		aiMesh* mesh = model->AiScene->mMeshes[m];
-
-		// 頂点バッファ生成
-		{
-			Vertex3d* vertex = new Vertex3d[mesh->mNumVertices]{};
-
-			for (unsigned int v = 0; v < mesh->mNumVertices; v++)
-			{
-
-				vertex[v].position = XMFLOAT3(mesh->mVertices[v].x * scale, mesh->mVertices[v].y * scale, mesh->mVertices[v].z * scale);
-				vertex[v].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-				vertex[v].normal = XMFLOAT3(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
-				vertex[v].texcoord = XMFLOAT2( mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
-				vertex[v].texuse = 1.0f;
-			}
-
-			D3D11_BUFFER_DESC bd{};
-			bd.Usage = D3D11_USAGE_DEFAULT;
-			bd.ByteWidth = sizeof(Vertex3d) * mesh->mNumVertices;
-			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-			bd.CPUAccessFlags = 0;
-
-			D3D11_SUBRESOURCE_DATA sd{};
-			sd.pSysMem = vertex;
-
-			Direct3D_GetDevice()->CreateBuffer(&bd, &sd, &model->VertexBuffer[m]);
-			
-
-
-			delete[] vertex;
-		}
-
-
-		// インデックスバッファ生成
-		{
-			unsigned int* index = new unsigned int[mesh->mNumFaces * 3];
-
-			for (unsigned int f = 0; f < mesh->mNumFaces; f++)
-			{
-				const aiFace* face = &mesh->mFaces[f];
-
-				assert(face->mNumIndices == 3);
-
-				index[f * 3 + 0] = face->mIndices[0];
-				index[f * 3 + 1] = face->mIndices[1];
-				index[f * 3 + 2] = face->mIndices[2];
-			}
-
-			D3D11_BUFFER_DESC bd{};
-			bd.Usage = D3D11_USAGE_DEFAULT;
-			bd.ByteWidth = sizeof(unsigned int) * mesh->mNumFaces * 3;
-			bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-			bd.CPUAccessFlags = 0;
-
-			D3D11_SUBRESOURCE_DATA sd{};
-			sd.pSysMem = index;
-
-			Direct3D_GetDevice()->CreateBuffer(&bd, &sd, &model->IndexBuffer[m]);
-
-
-
-			delete[] index;
-		}
-	}
-
-
-
-	//テクスチャ読み込み
-	for(unsigned int i = 0; i < model->AiScene->mNumTextures; i++)
-	{
-		aiTexture* aitexture = model->AiScene->mTextures[i];
-
-
-		ID3D11ShaderResourceView* texture;
-		TexMetadata metadata;
-		ScratchImage image;
-		LoadFromWICMemory((const void*)aitexture->pcData, aitexture->mWidth, WIC_FLAGS_NONE, &metadata, image);
-		CreateShaderResourceView(Direct3D_GetDevice(), image.GetImages(), image.GetImageCount(), metadata, &texture);
-		assert(texture);
-
-		model->Texture[aitexture->mFilename.data] = texture;
-	}
-
-
-	g_WhiteTexId = Texture_Load(L"resources/texture/white.png"); // サーフェスカラー用
-
-	return model;
 }
 
-
-
-
-void ModelRelease(MODEL* model)
+/*========================================================================================================
+	識別名を指定するコンストラクタ
+	引数:
+	  name - このモデルの識別名
+========================================================================================================*/
+Model::Model(const std::wstring& name)
+	: Resource(name, ResourceClassID::Model)
 {
-	for (unsigned int m = 0; m < model->AiScene->mNumMeshes; m++)
-	{
-		model->VertexBuffer[m]->Release();
-		model->IndexBuffer[m]->Release();
-	}
-
-	delete[] model->VertexBuffer;
-	delete[] model->IndexBuffer;
-
-
-	for (std::pair<const std::string, ID3D11ShaderResourceView*> pair : model->Texture)
-	{
-		pair.second->Release();
-	}
-
-
-	aiReleaseImport(model->AiScene);
-
-
-	delete model;
 }
 
-void ModelDraw(const MODEL* model, const DirectX::XMMATRIX& mtxWorld)
+/*========================================================================================================
+	デストラクタ
+	モデルを解放する。
+========================================================================================================*/
+Model::~Model()
 {
+	Release();
+}
 
-	// シェーダーを描画パイプラインに設定
-	Shader3d_Begin();
+/*========================================================================================================
+	モデルの初期化
+	モデルファイルから読み込みを行う。
+	
+	引数:
+	  filename - モデルファイルのパス
+	戻り値: 初期化に成功した場合true
+	例外: 初期化に失敗した場合はruntime_errorをスロー
+========================================================================================================*/
+bool Model::Initialize(const std::wstring& filename)
+{
+	ImportFromFile(filename);
+	
+	return IsValid();
+}
 
-	for (unsigned int ModelNum = 0; ModelNum < model->AiScene->mNumMeshes; ModelNum++)
+/*========================================================================================================
+	リソースを解放する
+	保持しているメッシュとマテリアルをクリアする。
+========================================================================================================*/
+void Model::Release()
+{
+	m_MeshMaterialPairs.clear();
+}
+
+/*========================================================================================================
+	リソースが有効かどうかを判定する
+	
+	戻り値: 少なくとも1つのメッシュ・マテリアルペアが存在する場合true
+========================================================================================================*/
+bool Model::IsValid() const
+{
+	return !m_MeshMaterialPairs.empty();
+}
+
+/*========================================================================================================
+	メッシュとマテリアルのペアを追加する
+	
+	引数:
+	  mesh - 追加するメッシュ
+	  material - 追加するマテリアル
+========================================================================================================*/
+void Model::AddMeshMaterialPair(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material)
+{
+	MeshMaterialPair pair;
+	pair.mesh = mesh;
+	pair.material = material;
+	m_MeshMaterialPairs.push_back(pair);
+}
+
+/*========================================================================================================
+	メッシュとマテリアルのペア数を取得する
+	
+	戻り値: ペアの数
+========================================================================================================*/
+size_t Model::GetPairCount() const
+{
+	return m_MeshMaterialPairs.size();
+}
+
+/*========================================================================================================
+	指定されたインデックスのメッシュを取得する
+	
+	引数:
+	  index - インデックス
+	戻り値: メッシュのshared_ptr
+========================================================================================================*/
+std::shared_ptr<Mesh> Model::GetMesh(size_t index) const
+{
+	if (index >= m_MeshMaterialPairs.size())
 	{
-		// 頂点バッファを描画パイプラインに設定
-		UINT stride = sizeof(Vertex3d);
-		UINT offset = 0;
-		Direct3D_GetDeviceContext()->IASetVertexBuffers(0, 1, &model->VertexBuffer[ModelNum], &stride, &offset);
-
-
-		// 頂点インデックスを描画パイプラインに設定
-		Direct3D_GetDeviceContext()->IASetIndexBuffer(model->IndexBuffer[ModelNum], DXGI_FORMAT_R32_UINT, 0);
-
-
-
-		Shader3d_SetWorldMatrix(mtxWorld);
-
-
-		// プリミティブトポロジ設定
-		Direct3D_GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		// テクスチャの設定
-		aiString texture;
-		aiMaterial* aimaterial = model->AiScene->mMaterials[model->AiScene->mMeshes[ModelNum]->mMaterialIndex];
-		aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texture);
-
-		if (texture.length != 0)
-		{
-			//テクスチャの設定
-			Direct3D_GetDeviceContext()->PSSetShaderResources(0, 1, &model->Texture.at(texture.data));
-			Shader3d_SetMaterialDiffuse({ 1.0f, 1.0f, 1.0f, 1.0f });
-		}
-		else
-		{
-			Texture_SetTexture(g_WhiteTexId);
-			aiColor3D diffuse;
-			aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
-			Shader3d_SetMaterialDiffuse({ diffuse.r, diffuse.g, diffuse.b, 1.0f });
-		}
-
-		// ポリゴン描画命令発行
-		Direct3D_GetDeviceContext()->DrawIndexed(model->AiScene->mMeshes[ModelNum]->mNumFaces * 3, 0, 0);
+		return nullptr;
 	}
+	return m_MeshMaterialPairs[index].mesh;
+}
+
+/*========================================================================================================
+	指定されたインデックスのマテリアルを取得する
+	
+	引数:
+	  index - インデックス
+	戻り値: マテリアルのshared_ptr
+========================================================================================================*/
+std::shared_ptr<Material> Model::GetMaterial(size_t index) const
+{
+	if (index >= m_MeshMaterialPairs.size())
+	{
+		return nullptr;
+	}
+	return m_MeshMaterialPairs[index].material;
+}
+
+/*========================================================================================================
+	モデルファイルからインポートする（プレースホルダー）
+	
+	現在は実装されていない。将来的にAssimpなどを使用してモデルをインポートする。
+	
+	引数:
+	  device - Direct3D11デバイス
+	  filename - モデルファイルのパス
+	例外: インポートに失敗した場合はruntime_errorをスロー
+========================================================================================================*/
+void Model::ImportFromFile(const std::wstring& /*filename*/)
+{
+	// TODO: Assimpなどを使用してモデルファイルを読み込む実装
+	// 現在はプレースホルダーとして例外をスローする
+	
+	throw std::runtime_error("Model::ImportFromFile is not yet implemented");
 }
