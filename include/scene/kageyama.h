@@ -36,8 +36,7 @@ public:
 		// —§•û‘ÌGameObject‚Ìì¬
 		GameObject* cube1 = new GameObject();
 		auto mr1 = cube1->AddComponent<MeshRenderer>();
-		mr1->SetMesh(MeshFactory::CreateCube(1.0f));
-		mr1->GetMaterial()->Texture = TextureFactory::Create(L"grass.png");
+		mr1->SetMesh(MeshFactory::CreateCube());
 		auto tf1 = cube1->GetComponent<TransForm>();
 		tf1->Position.z += 2.0f;
 		tf1->Position.y += 3.0f;
