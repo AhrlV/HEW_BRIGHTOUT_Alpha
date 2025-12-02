@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dev_scene\kageyama.cpp" />
+    <ClCompile Include="src\direct3D\constant_buffer.cpp" />
     <ClCompile Include="src\direct3D\debug_text.cpp" />
     <ClCompile Include="src\direct3D\direct3d_device.cpp" />
     <ClCompile Include="src\direct3D\direct3d_RTV.cpp" />
@@ -47,6 +48,7 @@
     <ClCompile Include="src\physics\physicssystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\direct3D\constant_buffer.h" />
     <ClInclude Include="include\direct3D\debug_text.h" />
     <ClInclude Include="include\direct3D\direct3d_device.h" />
     <ClInclude Include="include\direct3D\direct3d_RTV.h" />

@@ -97,15 +97,13 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE /*hPrevInstanc
     };
 
     auto vertexShader = ShaderFactory::CreateVertexShader(L"VS_3D_Default.cso", inputLayout);
-    vertexShader->AddConstantBuffer(sizeof(XMFLOAT4X4));
-    vertexShader->AddConstantBuffer(sizeof(XMFLOAT4X4));
+    vertexShader->AddConstantBuffer(sizeof(XMFLOAT4X4) * 2);
     vertexShader->AddConstantBuffer(sizeof(XMFLOAT4X4));
 
     // ピクセルシェーダーの作成（ShaderFactoryを使用、Deviceは内部取得）
     auto pixelShader = ShaderFactory::CreatePixelShader(L"PS_3D_Default.cso");
-    pixelShader->AddConstantBuffer(sizeof(XMFLOAT4));
+    pixelShader->AddConstantBuffer(sizeof(XMFLOAT4) * 3);
     pixelShader->AddConstantBuffer(sizeof(XMFLOAT4) * 2);
-    pixelShader->AddConstantBuffer(sizeof(XMFLOAT4));
 
     auto mat = MaterialFactory::Create(L"default.mat");
 

@@ -131,6 +131,9 @@
     <ClCompile Include="src\direct3D\resource.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
+    <ClCompile Include="src\direct3D\constant_buffer.cpp">
+      <Filter>Direct3D\ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\direct3D\debug_text.h">
@@ -234,6 +237,9 @@
     </ClInclude>
     <ClInclude Include="include\direct3D\texture_factory.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\direct3D\constant_buffer.h">
+      <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

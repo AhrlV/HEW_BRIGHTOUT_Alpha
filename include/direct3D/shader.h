@@ -16,7 +16,12 @@
 #include <wrl/client.h>
 #include <string>
 #include <vector>
+#include <map>
+#include <memory>
 #include "direct3D/resource.h"
+
+// 前方宣言
+class ConstantBuffer;
 
 /*============================================================================================================
     シェーダータイプ列挙型
@@ -71,7 +76,7 @@ public:
     //   device - Direct3D11デバイス
     //   byteWidth - 定数バッファのサイズ（バイト）
     // 戻り値: 追加された定数バッファのインデックス
-    // 例外: 作成に失敗した場合はruntime_error例外をスロー
+    // 例外: 作成に失敗した場合はruntime_errorをスロー
     size_t AddConstantBuffer(UINT byteWidth);
     
     // 定数バッファを取得する
@@ -88,8 +93,20 @@ public:
     // 引数:
     //   index - 定数バッファのインデックス
     //   data - 更新するデータのポインタ
-    // 例外: 更新に失敗した場合はruntime_error例外をスロー
+    // 例外: 更新に失敗した場合はruntime_errorをスロー
     void UpdateConstantBuffer(size_t index, const void* data);
+    
+    // 定数バッファ情報を名前で取得する
+    // 引数:
+    //   name - 定数バッファの名前
+    // 戻り値: ConstantBufferのポインタ（存在しない場合はnullptr）
+    ConstantBuffer* GetConstantBufferByName(const std::string& name);
+    
+    // 定数バッファ情報を追加する
+    // 引数:
+    //   name - 定数バッファの名前
+    //   constantBuffer - ConstantBufferのshared_ptr
+    void AddConstantBufferInfo(const std::string& name, std::shared_ptr<ConstantBuffer> constantBuffer);
 
     /*========================================================================================================
         シェーダー設定（純粋仮想関数）
@@ -152,6 +169,9 @@ protected:
     
     // シェーダーバイトコード
     std::vector<uint8_t> m_Bytecode;
+    
+    // 定数バッファ名とConstantBufferクラスのマップ
+    std::map<std::string, std::shared_ptr<ConstantBuffer>> m_ConstantBufferMap;
 };
 
 /*============================================================================================================

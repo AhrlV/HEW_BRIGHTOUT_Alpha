@@ -9,6 +9,7 @@
 =============================================================================================================*/
 
 #include "direct3D/shader.h"
+#include "direct3D/constant_buffer.h"
 #include <fstream>
 #include <stdexcept>
 #include "direct3D/direct3d_device.h"
@@ -144,7 +145,7 @@ size_t Shader::GetConstantBufferCount() const
     引数:
       index - 定数バッファのインデックス
       data - 更新するデータのポインタ
-    例外: 更新に失敗した場合はruntime_error例外をスロー
+    例外: 更新に失敗した場合はruntime_errorをスロー
 =============================================================================================================*/
 void Shader::UpdateConstantBuffer(size_t index, const void* data)
 {
@@ -171,12 +172,49 @@ void Shader::UpdateConstantBuffer(size_t index, const void* data)
 }
 
 /*============================================================================================================
+    定数バッファ情報を名前で取得する
+    定数バッファマップから指定された名前のConstantBufferを取得する。
+    
+    引数:
+      name - 定数バッファの名前
+    戻り値: ConstantBufferのポインタ（存在しない場合はnullptr）
+=============================================================================================================*/
+ConstantBuffer* Shader::GetConstantBufferByName(const std::string& name)
+{
+    auto it = m_ConstantBufferMap.find(name);
+    if (it != m_ConstantBufferMap.end())
+    {
+        return it->second.get();
+    }
+    return nullptr;
+}
+
+/*============================================================================================================
+    定数バッファ情報を追加する
+    定数バッファマップに新しいConstantBufferを追加する。
+    
+    引数:
+      name - 定数バッファの名前
+      constantBuffer - ConstantBufferのshared_ptr
+=============================================================================================================*/
+void Shader::AddConstantBufferInfo(const std::string& name, std::shared_ptr<ConstantBuffer> constantBuffer)
+{
+    if (!constantBuffer)
+    {
+        throw std::runtime_error("Shader::AddConstantBufferInfo - constantBufferがnullptrです");
+    }
+    
+    m_ConstantBufferMap[name] = constantBuffer;
+}
+
+/*============================================================================================================
     リソースを解放する
-    すべてのシェーダーリソースを解放する。
+    全てのシェーダーリソースを解放する。
 =============================================================================================================*/
 void Shader::Release()
 {
     m_ConstantBuffers.clear();
+    m_ConstantBufferMap.clear();
     m_Bytecode.clear();
     m_ShaderType = ShaderType::Unknown;
 }

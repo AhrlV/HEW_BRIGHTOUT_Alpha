@@ -1,17 +1,14 @@
-cbuffer PS_CONSTANT_BUFFER0 : register(b0)
+cbuffer PerFrame : register(b0)
 {
-    float4 ambient_color;
-}
+    float4 ambient_color; // ŠÂ‹«Œõ‚ÌF
+    float4 directional_color; // ŠgŽU”½ŽËŒõ‚ÌF
+    float4 directional_direction; // ŠgŽU”½ŽËŒõ‚Ì•ûŒüiƒ[ƒ‹ƒh‹óŠÔj
+};
 
-cbuffer PS_CONSTANT_BUFFER1 : register(b1)
+cbuffer PerMaterial : register(b1)
 {
-    float4 diffuse_color;
-    float4 diffuse_world_vector;
-}
-
-cbuffer PS_CONSTANT_BUFFER2 : register(b2)
-{
-    float4 material_diffuse_color;
+    float4 base_color; // ÞŽ¿‚ÌŠgŽU”½ŽËF
+    float4 diffuse_color; // ŠgŽU”½ŽËŒõ‚ÌF
 }
 
     
@@ -29,14 +26,14 @@ SamplerState major_sampler; // ƒeƒNƒXƒ`ƒƒƒTƒ“ƒvƒ‰
 
 float4 main(PS_INPUT psin) : SV_TARGET
 {    
-    float4 material = major_texture.Sample(major_sampler, psin.uv) * psin.color * material_diffuse_color;
+    float4 material = major_texture.Sample(major_sampler, psin.uv) * psin.color * diffuse_color;
     float3 ambient = material.rgb * ambient_color.rgb;
         
-        // -1 ~ 1 -> 0 ~ 1
-        //float brightness = max(0.0f, dot(-diffuse_world_vector.xyz, normalize(psin.normalW)));
+    // -1 ~ 1 -> 0 ~ 1
+    //float brightness = max(0.0f, dot(-diffuse_world_vector.xyz, normalize(psin.normalW)));
         
-        // -1 ~ 1 -> 0 ~ 2 -> 0 ~ 1
-    float brightness = (dot(-diffuse_world_vector.xyz, normalize(psin.normalW)) + 1) * 0.5f;
+    // -1 ~ 1 -> 0 ~ 2 -> 0 ~ 1
+    float brightness = (dot(-directional_direction.xyz, normalize(psin.normalW)) + 1) * 0.5f;
         
     float3 diffuse = material.rgb * diffuse_color.rgb * brightness;
         

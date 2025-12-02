@@ -9,10 +9,15 @@
 =============================================================================================================*/
 #include "direct3D/shader_factory.h"
 #include "direct3D/shader.h"
+#include "direct3D/constant_buffer.h"
 #include "direct3D/resource_manager.h"
 #include "direct3D/direct3d_device.h"
+#include <d3dcompiler.h>
+#include <wrl/client.h>
 #include <stdexcept>
 #include <fstream>
+
+#pragma comment(lib, "d3dcompiler.lib")
 
 /*========================================================================================================
 	ShaderFactory::BuildShaderPath
@@ -31,37 +36,121 @@ std::wstring ShaderFactory::BuildShaderPath(const std::wstring& filename)
 /*========================================================================================================
 	ShaderFactory::LoadShaderFile
 	
-	シェーダーファイル(.cso)を読み込む。
+	シェーダーファイル(.cso)をID3D11Blobを使用して読み込む。
 	コンパイル済みシェーダーファイルをバイナリとして読み込む。
 	
 	引数:
 	  filename - シェーダーファイルのパス
-	  bytecode - 読み込んだバイトコードを格納するベクター
+	  blob - 読み込んだBlobを格納するComPtr
 	例外: 読み込みに失敗した場合はruntime_errorをスロー
 ========================================================================================================*/
-void ShaderFactory::LoadShaderFile(const std::wstring& filename, std::vector<uint8_t>& bytecode)
+void ShaderFactory::LoadShaderFile(const std::wstring& filename, Microsoft::WRL::ComPtr<ID3DBlob>& blob)
 {
-	std::ifstream file(filename, std::ios::binary | std::ios::ate);
-	if (!file.is_open())
-	{
-		throw std::runtime_error("ShaderFactory::LoadShaderFile - ファイルが開けませんでした");
-	}
-
-	std::streamsize size = file.tellg();
-	file.seekg(0, std::ios::beg);
-
-	if (size <= 0)
-	{
-		throw std::runtime_error("ShaderFactory::LoadShaderFile - ファイルが空です");
-	}
-
-	bytecode.resize(static_cast<size_t>(size));
-	if (!file.read(reinterpret_cast<char*>(bytecode.data()), size))
+	HRESULT hr = D3DReadFileToBlob(filename.c_str(), blob.GetAddressOf());
+	
+	if (FAILED(hr))
 	{
 		throw std::runtime_error("ShaderFactory::LoadShaderFile - ファイルの読み込みに失敗しました");
 	}
+	
+	if (!blob || blob.Get()->GetBufferSize() == 0)
+	{
+		throw std::runtime_error("ShaderFactory::LoadShaderFile - ファイルが空です");
+	}
+}
 
-	file.close();
+/*========================================================================================================
+	ShaderFactory::ReflectShader
+	
+	シェーダーのリフレクション情報を取得し、定数バッファ情報を抽出する。
+	
+	引数:
+	  blob - シェーダーのBlob
+	  shader - 定数バッファ情報を格納するShaderオブジェクト
+	例外: リフレクションに失敗した場合はruntime_errorをスロー
+========================================================================================================*/
+void ShaderFactory::ReflectShader(const Microsoft::WRL::ComPtr<ID3DBlob>& blob, Shader* shader)
+{
+	if (!blob || !shader)
+	{
+		throw std::runtime_error("ShaderFactory::ReflectShader - blobまたはshaderがnullptrです");
+	}
+	
+	// リフレクションインターフェースを作成
+	Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflection;
+	HRESULT hr = D3DReflect(
+		blob.Get()->GetBufferPointer(),
+		blob.Get()->GetBufferSize(),
+		IID_ID3D11ShaderReflection,
+		reinterpret_cast<void**>(reflection.GetAddressOf())
+	);
+	
+	if (FAILED(hr))
+	{
+		throw std::runtime_error("ShaderFactory::ReflectShader - リフレクションの作成に失敗しました");
+	}
+	
+	// シェーダー記述を取得
+	D3D11_SHADER_DESC shaderDesc{};
+	hr = reflection->GetDesc(&shaderDesc);
+	
+	if (FAILED(hr))
+	{
+		throw std::runtime_error("ShaderFactory::ReflectShader - シェーダー記述の取得に失敗しました");
+	}
+	
+	// 定数バッファを解析
+	for (UINT i = 0; i < shaderDesc.ConstantBuffers; ++i)
+	{
+		ID3D11ShaderReflectionConstantBuffer* cbReflection = reflection->GetConstantBufferByIndex(i);
+		
+		if (!cbReflection)
+		{
+			continue;
+		}
+		
+		// 定数バッファ記述を取得
+		D3D11_SHADER_BUFFER_DESC bufferDesc{};
+		hr = cbReflection->GetDesc(&bufferDesc);
+		
+		if (FAILED(hr))
+		{
+			continue;
+		}
+		
+		// ConstantBufferクラスを作成
+		auto constantBuffer = std::make_shared<ConstantBuffer>();
+		constantBuffer->Initialize(bufferDesc.Name, bufferDesc.Size);
+		constantBuffer->SetBindSlot(i);
+		
+		// 変数情報を取得
+		for (UINT j = 0; j < bufferDesc.Variables; ++j)
+		{
+			ID3D11ShaderReflectionVariable* varReflection = cbReflection->GetVariableByIndex(j);
+			
+			if (!varReflection)
+			{
+				continue;
+			}
+			
+			D3D11_SHADER_VARIABLE_DESC varDesc{};
+			hr = varReflection->GetDesc(&varDesc);
+			
+			if (FAILED(hr))
+			{
+				continue;
+			}
+			
+			// 変数情報を追加
+			constantBuffer->AddVariable(varDesc.Name, varDesc.StartOffset);
+		}
+		
+		// Shaderクラスに定数バッファ情報を追加
+		shader->AddConstantBufferInfo(bufferDesc.Name, constantBuffer);
+		
+		// 古い方式の定数バッファも追加（互換性のため）
+		shader->AddConstantBuffer(bufferDesc.Size);
+	}
 }
 
 /*========================================================================================================
@@ -118,14 +207,17 @@ std::shared_ptr<VertexShader> ShaderFactory::CreateVertexShader(
 	auto vertexShader = std::make_shared<VertexShader>();
 	
 	// シェーダーバイトコードを読み込み
-	std::vector<uint8_t> bytecode;
-	LoadShaderFile(fullPath, bytecode);
+	Microsoft::WRL::ComPtr<ID3DBlob> blob;
+	LoadShaderFile(fullPath, blob);
+	
+	// リフレクションを使用して定数バッファ情報を取得
+	ReflectShader(blob, vertexShader.get());
 	
 	// 頂点シェーダーを作成
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vs;
 	HRESULT hr = d3dDevice->CreateVertexShader(
-		bytecode.data(),
-		bytecode.size(),
+		blob.Get()->GetBufferPointer(),
+		blob.Get()->GetBufferSize(),
 		nullptr,
 		vs.GetAddressOf()
 	);
@@ -140,8 +232,8 @@ std::shared_ptr<VertexShader> ShaderFactory::CreateVertexShader(
 	hr = d3dDevice->CreateInputLayout(
 		inputLayout.data(),
 		static_cast<UINT>(inputLayout.size()),
-		bytecode.data(),
-		bytecode.size(),
+		blob.Get()->GetBufferPointer(),
+		blob.Get()->GetBufferSize(),
 		inputLayoutObj.GetAddressOf()
 	);
 	
@@ -200,6 +292,13 @@ std::shared_ptr<PixelShader> ShaderFactory::CreatePixelShader(
 	
 	// キャッシュされていない場合は新規作成
 	auto pixelShader = std::make_shared<PixelShader>();
+	
+	// シェーダーバイトコードを読み込み
+	Microsoft::WRL::ComPtr<ID3DBlob> blob;
+	LoadShaderFile(fullPath, blob);
+	
+	// リフレクションを使用して定数バッファ情報を取得
+	ReflectShader(blob, pixelShader.get());
 	
 	// PixelShaderオブジェクトの初期化
 	// 注: Initialize関数を使用して内部状態を設定します

@@ -15,10 +15,13 @@
 #include <string>
 #include <vector>
 #include <d3d11.h>
+#include <d3dcommon.h>
+#include <wrl/client.h>
 
 // 前方宣言
 class VertexShader;
 class PixelShader;
+class Shader;
 
 /*============================================================================================================
     ShaderFactoryクラス
@@ -78,16 +81,28 @@ private:
 	static std::wstring BuildShaderPath(const std::wstring& filename);
 	
 	/*========================================================================================================
-		シェーダーファイル(.cso)を読み込む
+		シェーダーファイル(.cso)をID3D11Blobを使用して読み込む
 		
-		コンパイル済みシェーダーファイルをバイナリとして読み込む。
+		コンパイル済みシェーダーファイルをBlobとして読み込む。
 		
 		引数:
 		  filename - シェーダーファイルのパス
-		  bytecode - 読み込んだバイトコードを格納するベクター
+		  blob - 読み込んだBlobを格納するComPtr
 		例外: 読み込みに失敗した場合はruntime_errorをスロー
 	========================================================================================================*/
-	static void LoadShaderFile(const std::wstring& filename, std::vector<uint8_t>& bytecode);
+	static void LoadShaderFile(const std::wstring& filename, Microsoft::WRL::ComPtr<ID3DBlob>& blob);
+	
+	/*========================================================================================================
+		シェーダーのリフレクション情報を取得
+		
+		シェーダーのリフレクション情報を取得し、定数バッファ情報を抽出する。
+		
+		引数:
+		  blob - シェーダーのBlob
+		  shader - 定数バッファ情報を格納するShaderオブジェクト
+		例外: リフレクションに失敗した場合はruntime_errorをスロー
+	========================================================================================================*/
+	static void ReflectShader(const Microsoft::WRL::ComPtr<ID3DBlob>& blob, Shader* shader);
 };
 
 #endif // SHADER_FACTORY_H

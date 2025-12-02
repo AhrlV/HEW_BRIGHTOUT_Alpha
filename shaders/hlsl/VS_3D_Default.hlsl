@@ -1,17 +1,12 @@
-cbuffer VS_CONSTANT_BUFFER0 : register(b0)
-{
-    float4x4 world;
-}
-
-cbuffer VS_CONSTANT_BUFFER1 : register(b1)
+cbuffer PerFrame : register(b0)
 {
     float4x4 view;
-}
-
-cbuffer VS_CONSTANT_BUFFER2 : register(b2)
-{
     float4x4 proj;
-}
+};
+cbuffer PerObject : register(b1)
+{
+    float4x4 world;
+};
 
 
 struct VS_INPUT
