@@ -2,7 +2,7 @@
 
     ウィンドウ・テスト描画用メイン [main.cpp]
     GraphicsDevice / RenderTargetManager / Mesh / MeshRenderer / Material / Camera
-    を用いて単純な白い立方体を描画するサンプル。
+    を用いて単純な板面の描画を描画するサンプル。
 
     Author : Ryosuke Kageyama
     Date   : 2025/11/25
@@ -17,9 +17,9 @@
 // Direct3D 関連
 #include "direct3D/direct3d_device.h"
 #include "direct3D/direct3d_RTV.h"
-#include "direct3D/resource_factory.h"
 
-#include "lifecycle/world.h"
+#include "lifecycle/scene_manager.h"
+#include "lifecycle/gameloop.h"
 
 
 /*============================================================================================================
@@ -35,7 +35,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 /*============================================================================================================
     WinMain
-    ウィンドウ生成、D3D初期化、立方体描画のテストループを構築する。
+    ウィンドウ作成、D3D初期化、板面の描画のテストループを構築する。
 =============================================================================================================*/
 int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE /*hPrevInstance*/, _In_ LPSTR /*lpCmdLine*/, _In_ int nCmdShow)
 {
@@ -88,36 +88,21 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE /*hPrevInstanc
     rtm.Initialize(device.GetDevice(), device.GetSwapChain());
 
 
-    // 頂点シェーダーの作成（ShaderFactoryを使用、Deviceは内部取得）
-    std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayout = {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
+    // SceneManagerシングルトンを取得してSceneを設定・初期化
+    auto& sceneMgr = SceneManager::Instance();
+    sceneMgr.InitializeScene();
 
-    auto vertexShader = ShaderFactory::CreateVertexShader(L"VS_3D_Default.cso", inputLayout);
-    vertexShader->AddConstantBuffer(sizeof(XMFLOAT4X4));
-    vertexShader->AddConstantBuffer(sizeof(XMFLOAT4X4));
-    vertexShader->AddConstantBuffer(sizeof(XMFLOAT4X4));
 
-    // ピクセルシェーダーの作成（ShaderFactoryを使用、Deviceは内部取得）
-    auto pixelShader = ShaderFactory::CreatePixelShader(L"PS_3D_Default.cso");
-    pixelShader->AddConstantBuffer(sizeof(XMFLOAT4));
-    pixelShader->AddConstantBuffer(sizeof(XMFLOAT4) * 2);
-    pixelShader->AddConstantBuffer(sizeof(XMFLOAT4));
+    // ゲームループの取得
+    auto& gameLoop = GameLoop::Instance();
 
-    auto mat = MaterialFactory::Create(L"default.mat");
-
-    // Worldシングルトンを取得してSceneを設定・初期化
-    auto& world = World::Instance();
-    world.InitializeScene();
 
     // メインループ
     MSG msg;
     BOOL running = TRUE;
     while (running)
     {
+        // Windowsメッセージ処理
         while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
             if (msg.message == WM_QUIT)
@@ -129,8 +114,17 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE /*hPrevInstanc
             DispatchMessage(&msg);
         }
 
-        // Worldのティック処理を呼び出し
-        world.Tick();
+        // ゲームループのティック処理
+        // 物理更新、Awake、Start、Update、LateUpdate、破棄、描画を全て実行
+        try
+        {
+            gameLoop.Tick();
+        }
+        catch (const std::runtime_error& e)
+        {
+            MessageBoxA(nullptr, e.what(), "エラー", MB_OK | MB_ICONERROR);
+            break;
+        }
     }
 
     return 0;
@@ -138,7 +132,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE /*hPrevInstanc
 
 /*============================================================================================================
     WndProc
-    入力処理と終了処理のみを簡易実装する。
+    入力処理と終了処理のみの簡易実装。
 =============================================================================================================*/
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {

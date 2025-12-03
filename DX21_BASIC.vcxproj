@@ -20,66 +20,77 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dev_scene\kageyama.cpp" />
+    <ClCompile Include="src\core\main.cpp" />
     <ClCompile Include="src\direct3D\debug_text.cpp" />
     <ClCompile Include="src\direct3D\direct3d_device.cpp" />
     <ClCompile Include="src\direct3D\direct3d_RTV.cpp" />
-    <ClCompile Include="src\direct3D\main.cpp" />
-    <ClCompile Include="src\direct3D\material.cpp" />
-    <ClCompile Include="src\direct3D\material_factory.cpp" />
-    <ClCompile Include="src\direct3D\mesh.cpp" />
-    <ClCompile Include="src\direct3D\mesh_factory.cpp" />
-    <ClCompile Include="src\direct3D\mesh_renderer.cpp" />
-    <ClCompile Include="src\direct3D\model.cpp" />
-    <ClCompile Include="src\direct3D\model_factory.cpp" />
-    <ClCompile Include="src\direct3D\resource.cpp" />
-    <ClCompile Include="src\direct3D\resource_manager.cpp" />
-    <ClCompile Include="src\direct3D\shader.cpp" />
-    <ClCompile Include="src\direct3D\shader_factory.cpp" />
     <ClCompile Include="src\direct3D\system_timer.cpp" />
-    <ClCompile Include="src\direct3D\texture.cpp" />
-    <ClCompile Include="src\direct3D\texture_factory.cpp" />
     <ClCompile Include="src\direct3D\WICTextureLoader11.cpp" />
     <ClCompile Include="src\lifecycle\component.cpp" />
+    <ClCompile Include="src\lifecycle\gameloop.cpp" />
     <ClCompile Include="src\lifecycle\gameobject.cpp" />
     <ClCompile Include="src\lifecycle\object.cpp" />
     <ClCompile Include="src\lifecycle\scene.cpp" />
-    <ClCompile Include="src\lifecycle\world.cpp" />
+    <ClCompile Include="src\lifecycle\scene_manager.cpp" />
     <ClCompile Include="src\physics\physicssystem.cpp" />
+    <ClCompile Include="src\rendering\material_property_block.cpp" />
+    <ClCompile Include="src\rendering\mesh_renderer.cpp" />
+    <ClCompile Include="src\rendering\property_block.cpp" />
+    <ClCompile Include="src\rendering\render_system.cpp" />
+    <ClCompile Include="src\resourcemanagement\constant_buffer.cpp" />
+    <ClCompile Include="src\resourcemanagement\material.cpp" />
+    <ClCompile Include="src\resourcemanagement\material_factory.cpp" />
+    <ClCompile Include="src\resourcemanagement\mesh.cpp" />
+    <ClCompile Include="src\resourcemanagement\mesh_factory.cpp" />
+    <ClCompile Include="src\resourcemanagement\model.cpp" />
+    <ClCompile Include="src\resourcemanagement\model_factory.cpp" />
+    <ClCompile Include="src\resourcemanagement\resource.cpp" />
+    <ClCompile Include="src\resourcemanagement\resource_manager.cpp" />
+    <ClCompile Include="src\resourcemanagement\shader.cpp" />
+    <ClCompile Include="src\resourcemanagement\shader_factory.cpp" />
+    <ClCompile Include="src\resourcemanagement\texture.cpp" />
+    <ClCompile Include="src\resourcemanagement\texture_factory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\direct3d.h" />
     <ClInclude Include="include\direct3D\debug_text.h" />
     <ClInclude Include="include\direct3D\direct3d_device.h" />
     <ClInclude Include="include\direct3D\direct3d_RTV.h" />
-    <ClInclude Include="include\direct3D\DirectXTex.h" />
-    <ClInclude Include="include\direct3D\material.h" />
-    <ClInclude Include="include\direct3D\material_factory.h" />
-    <ClInclude Include="include\direct3D\mesh.h" />
-    <ClInclude Include="include\direct3D\mesh_factory.h" />
-    <ClInclude Include="include\direct3D\mesh_renderer.h" />
-    <ClInclude Include="include\direct3D\model.h" />
-    <ClInclude Include="include\direct3D\model_factory.h" />
-    <ClInclude Include="include\direct3D\resource.h" />
-    <ClInclude Include="include\direct3D\resource_factory.h" />
-    <ClInclude Include="include\direct3D\resource_manager.h" />
-    <ClInclude Include="include\direct3D\shader.h" />
-    <ClInclude Include="include\direct3D\shader_factory.h" />
     <ClInclude Include="include\direct3D\system_timer.h" />
-    <ClInclude Include="include\direct3D\texture.h" />
-    <ClInclude Include="include\direct3D\texture_factory.h" />
     <ClInclude Include="include\direct3D\WICTextureLoader11.h" />
     <ClInclude Include="include\lifecycle.h" />
-    <ClInclude Include="include\lifecycle\camera.h" />
     <ClInclude Include="include\lifecycle\component.h" />
+    <ClInclude Include="include\lifecycle\gameloop.h" />
     <ClInclude Include="include\lifecycle\gameobject.h" />
     <ClInclude Include="include\lifecycle\object.h" />
     <ClInclude Include="include\lifecycle\scene.h" />
+    <ClInclude Include="include\lifecycle\scene_manager.h" />
     <ClInclude Include="include\lifecycle\time.h" />
-    <ClInclude Include="include\lifecycle\world.h" />
     <ClInclude Include="include\physics.h" />
     <ClInclude Include="include\physics\collider.h" />
     <ClInclude Include="include\physics\physicssystem.h" />
     <ClInclude Include="include\physics\rigidbody.h" />
     <ClInclude Include="include\physics\transform.h" />
+    <ClInclude Include="include\rendering.h" />
+    <ClInclude Include="include\rendering\camera.h" />
+    <ClInclude Include="include\rendering\material_property_block.h" />
+    <ClInclude Include="include\rendering\mesh_renderer.h" />
+    <ClInclude Include="include\rendering\property_block.h" />
+    <ClInclude Include="include\rendering\render_system.h" />
+    <ClInclude Include="include\resource_management.h" />
+    <ClInclude Include="include\resourcemanagement\constant_buffer.h" />
+    <ClInclude Include="include\resourcemanagement\material.h" />
+    <ClInclude Include="include\resourcemanagement\material_factory.h" />
+    <ClInclude Include="include\resourcemanagement\mesh.h" />
+    <ClInclude Include="include\resourcemanagement\mesh_factory.h" />
+    <ClInclude Include="include\resourcemanagement\model.h" />
+    <ClInclude Include="include\resourcemanagement\model_factory.h" />
+    <ClInclude Include="include\resourcemanagement\resource.h" />
+    <ClInclude Include="include\resourcemanagement\resource_manager.h" />
+    <ClInclude Include="include\resourcemanagement\shader.h" />
+    <ClInclude Include="include\resourcemanagement\shader_factory.h" />
+    <ClInclude Include="include\resourcemanagement\texture.h" />
+    <ClInclude Include="include\resourcemanagement\texture_factory.h" />
     <ClInclude Include="include\scene\kageyama.h" />
   </ItemGroup>
   <ItemGroup>
@@ -155,9 +166,15 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project=".props\Assimp.props" />
+    <Import Project=".props\DirectXTex.props" />
+    <Import Project=".props\RecastNavigation.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project=".props\Assimp.props" />
+    <Import Project=".props\DirectXTex.props" />
+    <Import Project=".props\RecastNavigation.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

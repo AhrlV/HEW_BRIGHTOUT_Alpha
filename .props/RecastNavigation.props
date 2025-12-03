@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ImportGroup Label="PropertySheets" />
+	<PropertyGroup Label="UserMacros" />
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<!-- DebugUtils -->
+			<AdditionalIncludeDirectories>$(ProjectDir)external\RecastNavigation\DebugUtils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+			<!-- Detour -->
+			<AdditionalIncludeDirectories>$(ProjectDir)external\RecastNavigation\Detour;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+			<!-- DetourCrowd -->
+			<AdditionalIncludeDirectories>$(ProjectDir)external\RecastNavigation\DetourCrowd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+			<!-- DetourTileCache -->
+			<AdditionalIncludeDirectories>$(ProjectDir)external\RecastNavigation\DetourTileCache;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+			<!-- Recast -->
+			<AdditionalIncludeDirectories>$(ProjectDir)external\RecastNavigation\Recast;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+		</ClCompile>
+		<Link>
+			<!-- DebugUtils -->
+			<AdditionalLibraryDirectories>$(ProjectDir)lib\RecastNavigation\DebugUtils\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+			<AdditionalDependencies>DebugUtils.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<!-- Detour -->
+			<AdditionalLibraryDirectories>$(ProjectDir)lib\RecastNavigation\Detour\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+			<AdditionalDependencies>Detour.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<!-- DetourCrowd -->
+			<AdditionalLibraryDirectories>$(ProjectDir)lib\RecastNavigation\DetourCrowd\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+			<AdditionalDependencies>DetourCrowd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<!-- DetourTileCache -->
+			<AdditionalLibraryDirectories>$(ProjectDir)lib\RecastNavigation\DetourTileCache\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+			<AdditionalDependencies>DetourTileCache.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<!-- Recast -->
+			<AdditionalLibraryDirectories>$(ProjectDir)lib\RecastNavigation\Recast\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+			<AdditionalDependencies>Recast.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+</Project>
