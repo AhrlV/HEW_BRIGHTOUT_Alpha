@@ -19,6 +19,8 @@
 Component::Component()
 	: Object()
 	, m_Owner(nullptr)
+	, m_IsAwakeCalled(false)
+	, m_IsStartCalled(false)
 {
 }
 

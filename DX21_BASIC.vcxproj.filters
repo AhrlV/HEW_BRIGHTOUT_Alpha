@@ -30,18 +30,6 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{08e39333-8e4e-4f55-973d-00f2c7793cb3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Components">
-      <UniqueIdentifier>{8dd0944c-8035-4867-b1bc-b25c51f1d7c1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Components\Physics">
-      <UniqueIdentifier>{2db7d675-47b7-44c5-9a8b-80234a3544a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Components\Physics\ソースファイル">
-      <UniqueIdentifier>{286e8595-7949-4938-a2dc-a8506e924ec6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Components\Physics\ヘッダーファイル">
-      <UniqueIdentifier>{1ba06aaf-a080-4db4-b950-c2dc8ff0a6b3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ResourceManagement">
       <UniqueIdentifier>{9e69db3c-d220-408b-8e92-cfa91dd899e1}</UniqueIdentifier>
     </Filter>
@@ -50,6 +38,27 @@
     </Filter>
     <Filter Include="ResourceManagement\ソースファイル">
       <UniqueIdentifier>{805f62fd-f5b5-498a-b0dd-b0f8edc9b6e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{8345fce2-46a6-49fc-b429-e76b7f64cd8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\ソースファイル">
+      <UniqueIdentifier>{96b47cab-5d2d-4c34-98f0-a89f4d965418}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\ヘッダーファイル">
+      <UniqueIdentifier>{41cb3291-57ad-4769-a2d9-54f113f5c2ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{2db7d675-47b7-44c5-9a8b-80234a3544a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\ソースファイル">
+      <UniqueIdentifier>{286e8595-7949-4938-a2dc-a8506e924ec6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\ヘッダーファイル">
+      <UniqueIdentifier>{1ba06aaf-a080-4db4-b950-c2dc8ff0a6b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{f25d6195-3182-4615-8558-172ad5dc5b98}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -62,16 +71,10 @@
     <ClCompile Include="src\direct3D\WICTextureLoader11.cpp">
       <Filter>Direct3D\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\main.cpp">
-      <Filter>Direct3D\ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="src\lifecycle\gameobject.cpp">
       <Filter>LifeCycle\ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="src\lifecycle\scene.cpp">
-      <Filter>LifeCycle\ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\lifecycle\world.cpp">
       <Filter>LifeCycle\ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="src\direct3D\direct3d_RTV.cpp">
@@ -87,59 +90,74 @@
       <Filter>LifeCycle\ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="src\physics\physicssystem.cpp">
-      <Filter>Components\Physics\ソースファイル</Filter>
+      <Filter>Physics\ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="dev_scene\kageyama.cpp">
       <Filter>開発シーン</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\material.cpp">
+    <ClCompile Include="src\resourcemanagement\constant_buffer.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\material_factory.cpp">
+    <ClCompile Include="src\resourcemanagement\material.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\mesh_factory.cpp">
+    <ClCompile Include="src\resourcemanagement\material_factory.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\mesh.cpp">
+    <ClCompile Include="src\resourcemanagement\mesh.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\resource_manager.cpp">
+    <ClCompile Include="src\resourcemanagement\mesh_factory.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\mesh_renderer.cpp">
-      <Filter>Direct3D\ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\direct3D\model_factory.cpp">
+    <ClCompile Include="src\resourcemanagement\model.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\model.cpp">
+    <ClCompile Include="src\resourcemanagement\model_factory.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\shader_factory.cpp">
+    <ClCompile Include="src\resourcemanagement\resource.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\shader.cpp">
+    <ClCompile Include="src\resourcemanagement\resource_manager.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\texture.cpp">
+    <ClCompile Include="src\resourcemanagement\shader.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\texture_factory.cpp">
+    <ClCompile Include="src\resourcemanagement\shader_factory.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\resource.cpp">
+    <ClCompile Include="src\resourcemanagement\texture.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\direct3D\constant_buffer.cpp">
-      <Filter>Direct3D\ソース ファイル</Filter>
+    <ClCompile Include="src\resourcemanagement\texture_factory.cpp">
+      <Filter>ResourceManagement\ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\material_property_block.cpp">
+      <Filter>Rendering\ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\mesh_renderer.cpp">
+      <Filter>Rendering\ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\property_block.cpp">
+      <Filter>Rendering\ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\render_system.cpp">
+      <Filter>Rendering\ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lifecycle\gameloop.cpp">
+      <Filter>LifeCycle\ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lifecycle\scene_manager.cpp">
+      <Filter>Rendering\ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\main.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\direct3D\debug_text.h">
-      <Filter>Direct3D\ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="include\direct3D\DirectXTex.h">
       <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="include\direct3D\system_timer.h">
@@ -149,19 +167,19 @@
       <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\collider.h">
-      <Filter>Components\Physics\ヘッダーファイル</Filter>
+      <Filter>Physics\ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\physicssystem.h">
-      <Filter>Components\Physics\ヘッダーファイル</Filter>
+      <Filter>Physics\ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\rigidbody.h">
-      <Filter>Components\Physics\ヘッダーファイル</Filter>
+      <Filter>Physics\ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\transform.h">
-      <Filter>Components\Physics\ヘッダーファイル</Filter>
+      <Filter>Physics\ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="include\physics.h">
-      <Filter>Components\Physics</Filter>
+      <Filter>Physics</Filter>
     </ClInclude>
     <ClInclude Include="include\lifecycle\component.h">
       <Filter>LifeCycle\ヘッダーファイル</Filter>
@@ -173,9 +191,6 @@
       <Filter>LifeCycle\ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="include\lifecycle\time.h">
-      <Filter>LifeCycle\ヘッダーファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="include\lifecycle\world.h">
       <Filter>LifeCycle\ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="include\lifecycle.h">
@@ -190,56 +205,77 @@
     <ClInclude Include="include\direct3D\direct3d_RTV.h">
       <Filter>Direct3D\ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\mesh_renderer.h">
-      <Filter>Direct3D\ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="include\lifecycle\object.h">
       <Filter>LifeCycle\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\lifecycle\camera.h">
-      <Filter>Direct3D\ヘッダー ファイル</Filter>
+    <ClInclude Include="include\resource_management.h">
+      <Filter>ResourceManagement</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\material.h">
+    <ClInclude Include="include\resourcemanagement\constant_buffer.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\material_factory.h">
+    <ClInclude Include="include\resourcemanagement\material.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\resource.h">
+    <ClInclude Include="include\resourcemanagement\material_factory.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\resource_manager.h">
+    <ClInclude Include="include\resourcemanagement\mesh.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\resource_factory.h">
+    <ClInclude Include="include\resourcemanagement\mesh_factory.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\model_factory.h">
+    <ClInclude Include="include\resourcemanagement\model.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\model.h">
+    <ClInclude Include="include\resourcemanagement\model_factory.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\mesh.h">
+    <ClInclude Include="include\resourcemanagement\resource.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\mesh_factory.h">
+    <ClInclude Include="include\resourcemanagement\resource_manager.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\shader.h">
+    <ClInclude Include="include\resourcemanagement\shader.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\shader_factory.h">
+    <ClInclude Include="include\resourcemanagement\shader_factory.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\texture.h">
+    <ClInclude Include="include\resourcemanagement\texture.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\texture_factory.h">
+    <ClInclude Include="include\resourcemanagement\texture_factory.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\direct3D\constant_buffer.h">
-      <Filter>Direct3D\ヘッダー ファイル</Filter>
+    <ClInclude Include="include\rendering\material_property_block.h">
+      <Filter>Rendering\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rendering\mesh_renderer.h">
+      <Filter>Rendering\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rendering\property_block.h">
+      <Filter>Rendering\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rendering\render_system.h">
+      <Filter>Rendering\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rendering.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lifecycle\gameloop.h">
+      <Filter>LifeCycle\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rendering\camera.h">
+      <Filter>Rendering\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lifecycle\scene_manager.h">
+      <Filter>Rendering\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\direct3d.h">
+      <Filter>Direct3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

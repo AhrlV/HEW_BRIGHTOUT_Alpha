@@ -13,12 +13,13 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
+#include "lifecycle/scene.h"
+#include "lifecycle/gameloop.h"
 #include "lifecycle/object.h"
 #include "component.h"
 #include <vector>
 #include <memory>
 #include <type_traits>
-#include <unordered_set>
 
 // 前方宣言
 class Scene;
@@ -37,11 +38,8 @@ private:
 	// 所有するコンポーネント
 	std::vector<std::unique_ptr<Component>> m_Components;
 
-	// 追加されたばかりの未 Awake コンポーネント
+	// 追加されたばかりの未登録コンポーネント
 	std::vector<Component*> m_AddedComponents;
-
-	// Start 済み集合
-	std::unordered_set<Component*> m_StartedComponents;
 
 	// 自身のアクティブフラグ
 	bool m_ActiveSelf;
@@ -62,13 +60,6 @@ public:
 	bool IsActiveSelf() const;
 	bool IsActiveInHierarchy() const;
 
-	// ライフサイクル処理
-	void AwakeNewComponents();
-	void StartNewComponents();
-	void Update();
-	void LateUpdate();
-	void FixedUpdate();
-
 	// Component追加メソッド（可変引数テンプレート）
 	template <typename T, typename... Args>
 	requires std::is_base_of<Component, T>::value
@@ -83,16 +74,13 @@ public:
 	[[nodiscard]] std::vector<T*> GetComponents() const;
 
 	friend class Scene;
+	friend class GameLoop;
 };
-
-// テンプレートメソッドの実装
-// Scene.hをインクルードして、RegisterComponentを呼べるようにする
-#include "lifecycle/scene.h"
 
 /*====================================================================
 	Componentを追加する
 	新しいComponentを作成し、GameObjectに追加する。
-	Sceneに登録済みの場合は、次のフレームでAwakeが呼ばれる。
+	即座にAwakeを呼び出し、GameLoopの未Startリストに登録する。
 	
 	テンプレート引数:
 	  T - 追加するComponentの型
@@ -115,14 +103,23 @@ T* GameObject::AddComponent(Args&&... args)
 	// コンポーネントリストに追加
 	m_Components.emplace_back(std::move(comp));
 
-	// 新規追加リストに追加（Awake待ち）
+	// 新規追加リストに追加（Scene登録待ち）
 	m_AddedComponents.push_back(raw);
 
 	// Sceneに登録済みの場合は、Sceneのコンポーネントマップに登録
-	// （まだSceneに登録されていない場合は、ProcessAwakeで登録される）
 	if(m_Scene)
 	{
 		m_Scene->RegisterComponent(raw, this);
+	}
+
+	// 即座にAwakeを呼び出す
+	if (!raw->m_IsAwakeCalled)
+	{
+		raw->Awake();
+		raw->m_IsAwakeCalled = true;
+		
+		// GameLoopの未Startリストに登録
+		GameLoop::Instance().RegisterAwakeComponent(raw);
 	}
 
 	return raw;

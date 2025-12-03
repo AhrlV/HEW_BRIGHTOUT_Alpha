@@ -14,8 +14,11 @@
 #include "lifecycle/scene.h"
 #include "lifecycle/gameobject.h"
 #include "lifecycle/component.h"
-#include "lifecycle/camera.h"
-#include "direct3D/mesh_renderer.h"
+#include "rendering/camera.h"
+#include "rendering/mesh_renderer.h"
+#include "rendering/render_system.h"
+#include "resourcemanagement/resource_manager.h"
+#include "lifecycle/gameloop.h"
 
 /*====================================================================
 	コンストラクタ
@@ -32,6 +35,7 @@ Scene::Scene()
 	Sceneを破棄する。
 ====================================================================*/
 Scene::~Scene() = default;
+
 
 /*====================================================================
 	GameObjectを登録する
@@ -55,9 +59,6 @@ void Scene::RegisterGameObject(GameObject* go)
 	go->m_Id = m_NextGameObjectId++;
 	go->m_Scene = this;
 	m_GameObjectMap[go->m_Id] = go;
-
-	// 新規作成リストに追加（ProcessAwakeで処理される）
-	m_NewlyCreated.push_back(go);
 }
 
 /*====================================================================
@@ -188,59 +189,35 @@ void Scene::DestroyGameObject(GameObject* target)
 }
 
 /*====================================================================
-	Sceneを初期化する
-	派生クラスでオーバーライドして使用する。
+	Sceneを終了する
+	全てのGameObject/Componentを削除し、レンダリングシステムをクリーンアップする。
 ====================================================================*/
-void Scene::Initialize() {}
-
-/*====================================================================
-	新規GameObjectのAwakeを処理する
-	新しく作成されたGameObjectとそのコンポーネントを初期化する。
-====================================================================*/
-void Scene::ProcessAwake()
+void Scene::Finalize()
 {
-	for (auto* go : m_NewlyCreated)
-	{
-		// 追加されたコンポーネントをSceneに登録
-		for(auto* comp : go->m_AddedComponents)
-		{
-			RegisterComponent(comp, go);
-		}
+	m_GameObjects.clear();
+	
+	m_GameObjectMap.clear();
+	m_ComponentMap.clear();
+	m_ComponentTypeMap.clear();
+	
+	m_NextGameObjectId = 1;
+	m_NextComponentId = 1;
+	
+	RenderSystem::Instance().Cleanup();
 
-		// Awakeを呼び出す
-		// 注: AwakeNewComponents()内でm_AddedComponentsがクリアされる
-		go->AwakeNewComponents();
-	}
-	m_NewlyCreated.clear();
+	ResourceManager::Instance().Clear();
+
+	// GameLoopの未Startリストもクリア
+	GameLoop::Instance().ClearPendingStart();
 }
 
 /*====================================================================
-	StartをGameObjectに対して処理する
-	まだStartが呼ばれていないコンポーネントのStartメソッドを呼び出す。
+	保留中のコンポーネントをSceneに登録する
+	全GameObjectの未登録コンポーネント（m_AddedComponents）をSceneに登録し、
+	リストをクリアする。
 ====================================================================*/
-void Scene::ProcessStart()
+void Scene::RegisterPendingComponents()
 {
-	for (auto& gameobj : m_GameObjects)
-	{
-		// 動的に追加されたコンポーネントをSceneに登録
-		for(auto* comp : gameobj->m_AddedComponents)
-		{
-			RegisterComponent(comp, gameobj.get());
-		}
-
-		// Startを呼び出す
-		// 注: StartNewComponents()内でm_AddedComponentsがクリアされる
-		gameobj->StartNewComponents();
-	}
-}
-
-/*====================================================================
-	フレーム更新を実行する
-	全てのGameObjectのUpdateメソッドを呼び出す。
-====================================================================*/
-void Scene::Update()
-{
-	// 動的に追加されたコンポーネントをSceneに登録
 	for(auto& gameobj : m_GameObjects)
 	{
 		for(auto* comp : gameobj->m_AddedComponents)
@@ -249,63 +226,26 @@ void Scene::Update()
 		}
 		gameobj->m_AddedComponents.clear();
 	}
-
-	// Update呼び出し
-	for (auto& gameobj : m_GameObjects)
-	{
-		gameobj->Update();
-	}
-
-	// 更新の最後に破棄フラグが立ったオブジェクトを削除
-	CleanupDestroyedObjects();
 }
 
 /*====================================================================
-	後段更新を実行する
-	全てのGameObjectのLateUpdateメソッドを呼び出す。
+	破棄処理を実行する
+	破棄フラグが立ったGameObjectを削除する。
 ====================================================================*/
-void Scene::LateUpdate()
+void Scene::ProcessCleanup()
 {
-	for (auto& gameobj : m_GameObjects)
-	{
-		gameobj->LateUpdate();
-	}
-
-	// 更新の最後に破棄フラグが立ったオブジェクトを削除
-	CleanupDestroyedObjects();
-}
-
-/*====================================================================
-	固定更新を実行する
-	全てのGameObjectのFixedUpdateメソッドを呼び出す。
-====================================================================*/
-void Scene::FixedUpdate()
-{
-	for (auto& gameobj : m_GameObjects)
-	{
-		gameobj->FixedUpdate();
-	}
-
-	// 更新の最後に破棄フラグが立ったオブジェクトを削除
 	CleanupDestroyedObjects();
 }
 
 /*====================================================================
 	描画を実行する
 	全てのカメラから全てのMeshRendererを描画する。
+	RenderSystemに処理を委譲する。
 ====================================================================*/
 void Scene::Render()
 {
-	auto cameras = GetComponentsByType<Camera>();
-	auto renderers = GetComponentsByType<MeshRenderer>();
-
-	for (auto* cam : cameras)
-	{
-		for (auto* mr : renderers)
-		{
-			mr->Render(*cam);
-		}
-	}
+	// RenderSystemにレンダリングを委譲
+	RenderSystem::Instance().Render(this);
 }
 
 /*====================================================================

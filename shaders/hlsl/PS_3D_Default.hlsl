@@ -26,7 +26,7 @@ SamplerState major_sampler; // テクスチャサンプラ
 
 float4 main(PS_INPUT psin) : SV_TARGET
 {    
-    float4 material = major_texture.Sample(major_sampler, psin.uv) * psin.color * diffuse_color;
+    float4 material = major_texture.Sample(major_sampler, psin.uv) * base_color * psin.color * diffuse_color;
     float3 ambient = material.rgb * ambient_color.rgb;
         
     // -1 ~ 1 -> 0 ~ 1

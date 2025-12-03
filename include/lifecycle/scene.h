@@ -33,9 +33,6 @@ private:
 	// 所有するGameObjectのvector
 	std::vector<std::unique_ptr<GameObject>> m_GameObjects;
 
-	// 新規作成されたGameObjectの一時保持vector
-	std::vector<GameObject*> m_NewlyCreated;
-
 	// ID管理
 	uint64_t m_NextGameObjectId;
 	uint64_t m_NextComponentId;
@@ -51,13 +48,26 @@ private:
 	// 破棄フラグが立ったオブジェクトを削除する
 	void CleanupDestroyedObjects();
 
+	// 保留中のコンポーネントをSceneに登録する
+	void RegisterPendingComponents();
+
 public:
 	// コンストラクタ・デストラクタ
 	Scene();
 	virtual ~Scene();
 
+
+
+	// リソース読み込み
+	virtual void ResourceLoad() {};
 	// 初期化
-	virtual void Initialize();
+	virtual void Initialize() {};
+	
+
+
+	// 終了処理
+	// シーン切り替え時に呼び出され、RenderSystemやResourceManagerなどの中身を解放する
+	virtual void Finalize();
 
 	// GameObject登録（Sceneが所有権を取得）
 	void RegisterGameObject(GameObject* go);
@@ -69,17 +79,21 @@ public:
 	// GameObject破棄
 	void DestroyGameObject(GameObject* target);
 
-	// ライフサイクル処理
-	void ProcessAwake();
-	void ProcessStart();
-	void Update();
-	void LateUpdate();
-	void FixedUpdate();
+	// 破棄処理を実行
+	void ProcessCleanup();
+
+	// 描画処理
 	void Render();
 
 	// 取得系
 	GameObject* GetGameObjectById(uint64_t id) const;
 	Component* GetComponentById(uint64_t id) const;
+
+	// 全Component取得（GameLoopから使用）
+	const std::unordered_map<uint64_t, Component*>& GetAllComponents() const
+	{
+		return m_ComponentMap;
+	}
 
 	// 型別Component取得テンプレート
 	template<typename T>
@@ -101,6 +115,7 @@ public:
 	}
 
 	friend class GameObject;
+	friend class GameLoop;
 };
 
 #endif // LIFECYCLE_SCENE_H
