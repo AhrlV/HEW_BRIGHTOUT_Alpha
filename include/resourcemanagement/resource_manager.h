@@ -2,7 +2,7 @@
 
     リソースマネージャー [resource_manager.h]
     すべてのリソース（Mesh、Material、Textureなど）を一元管理するシングルトンクラス。
-    ファイル名をキーとしてリソースを検索・取得できる。
+    ファイル名をキーとしてリソースを登録・取得できる。
 
     Author : Ryosuke Kageyama
     Date   : 2025/05/07
@@ -14,7 +14,7 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
-#include "resourcemanagement/resource.h"
+#include "lifecycle/object.h"
 
 /*============================================================================================================
     リソースマネージャークラス
@@ -37,25 +37,27 @@ public:
     /*========================================================================================================
         リソース登録
         新しいリソースをマネージャーに登録する。
-        同じファイル名のリソースが既に登録されている場合は登録しない。
+        同一ファイル名のリソースが既に登録されている場合は登録しない。
+        GameObjectとComponentは登録できない（StaticResourceBorderより後のクラスID）。
         
         引数:
           filename - リソースのファイル名（キーとして使用）
           resource - 登録するリソースのshared_ptr
-        戻り値: 登録に成功した場合true、既に登録済みの場合false
+        戻り値: 登録に成功した場合true、既に登録済みまたは無効なリソースの場合false
+        例外: GameObjectまたはComponentを登録しようとした場合は例外をスロー
     ========================================================================================================*/
-    bool RegisterResource(const std::wstring& filename, std::shared_ptr<Resource> resource);
+    bool RegisterResource(const std::wstring& filename, std::shared_ptr<Object> resource);
 
     /*========================================================================================================
         リソース取得
         指定したファイル名のリソースを取得する。
-        リソースが存在しない場合や型が一致しない場合はnullptrを返す。
+        リソースが存在しないか型が一致しない場合はnullptrを返す。
         
         引数:
           filename - 取得したいリソースのファイル名
         戻り値: 指定した型のリソースのshared_ptr（存在しない、または型が一致しない場合はnullptr）
     ========================================================================================================*/
-    std::shared_ptr<Resource> GetResource(const std::wstring& filename) const;
+    std::shared_ptr<Object> GetResource(const std::wstring& filename) const;
 
     /*========================================================================================================
         型指定リソース取得
@@ -63,7 +65,7 @@ public:
         型が一致しない場合はnullptrを返す。
         
         テンプレート引数:
-          T - 取得したいリソースの型（ResourceまたはResource派生クラス）
+          T - 取得したいリソースの型（ObjectまたはObject派生クラス）
         引数:
           filename - 取得したいリソースのファイル名
         戻り値: 指定した型のリソースのshared_ptr（存在しない、または型が一致しない場合はnullptr）
@@ -95,7 +97,7 @@ public:
         
         引数:
           filename - 削除するリソースのファイル名
-        戻り値: 削除に成功した場合true、リソースが存在しない場合false
+        戻り値: 削除に成功した場合true、リソースが存在しなかった場合false
     ========================================================================================================*/
     bool RemoveResource(const std::wstring& filename);
 
@@ -116,7 +118,7 @@ public:
     void Clear();
 
     /*========================================================================================================
-        リソース数取得
+        総リソース数取得
         登録されているリソースの総数を取得する。
         
         戻り値: 登録されているリソースの総数
@@ -134,7 +136,7 @@ public:
     size_t GetResourceCountByClassID(ResourceClassID classID) const;
 
     /*========================================================================================================
-        デバッグ情報出力
+        デバッグ出力
         登録されているすべてのリソースの情報をデバッグ出力する。
     ========================================================================================================*/
     void DumpResourceInfo() const;
@@ -146,7 +148,7 @@ private:
     // デストラクタ（すべてのリソースを解放）
     ~ResourceManager();
 
-    // ファイル名とリソースを紐づけるマップ
-    std::unordered_map<std::wstring, std::shared_ptr<Resource>> m_Resources;
+    // ファイル名とリソースを紐付けるマップ
+    std::unordered_map<std::wstring, std::shared_ptr<Object>> m_Resources;
 };
 #endif

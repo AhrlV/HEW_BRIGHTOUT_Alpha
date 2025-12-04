@@ -60,6 +60,27 @@
     <Filter Include="Core">
       <UniqueIdentifier>{f25d6195-3182-4615-8558-172ad5dc5b98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PrimitiveObjects">
+      <UniqueIdentifier>{3007fddc-e177-4491-85b3-d776fb51e7a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{d6ec9e98-800e-4246-92ac-759f39fe2786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\ソースファイル">
+      <UniqueIdentifier>{1e8636a9-1550-4fcc-92af-1a5d4a724951}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\ヘッダーファイル">
+      <UniqueIdentifier>{cc7a4d55-1e92-40e8-b782-baddcdf215e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PrimitiveObjects\ヘッダーファイル">
+      <UniqueIdentifier>{ee82d80d-4730-4da7-9fc3-9b83e00ab5fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Temepletes">
+      <UniqueIdentifier>{478919a0-6814-4e71-b8e1-85d2e5fc5d82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Temepletes\ヘッダーファイル">
+      <UniqueIdentifier>{583c710e-2324-4edf-8c2a-64dcb5d12c6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\direct3D\debug_text.cpp">
@@ -110,13 +131,7 @@
     <ClCompile Include="src\resourcemanagement\mesh_factory.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="src\resourcemanagement\model.cpp">
-      <Filter>ResourceManagement\ソースファイル</Filter>
-    </ClCompile>
     <ClCompile Include="src\resourcemanagement\model_factory.cpp">
-      <Filter>ResourceManagement\ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="src\resourcemanagement\resource.cpp">
       <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="src\resourcemanagement\resource_manager.cpp">
@@ -154,6 +169,15 @@
     </ClCompile>
     <ClCompile Include="src\core\main.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\transform.cpp">
+      <Filter>Physics\ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\quaternion.cpp">
+      <Filter>Math\ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resourcemanagement\prefab.cpp">
+      <Filter>ResourceManagement\ソースファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -226,13 +250,7 @@
     <ClInclude Include="include\resourcemanagement\mesh_factory.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\resourcemanagement\model.h">
-      <Filter>ResourceManagement\ヘッダーファイル</Filter>
-    </ClInclude>
     <ClInclude Include="include\resourcemanagement\model_factory.h">
-      <Filter>ResourceManagement\ヘッダーファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="include\resourcemanagement\resource.h">
       <Filter>ResourceManagement\ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="include\resourcemanagement\resource_manager.h">
@@ -276,6 +294,36 @@
     </ClInclude>
     <ClInclude Include="include\direct3d.h">
       <Filter>Direct3D</Filter>
+    </ClInclude>
+    <ClInclude Include="include\math\quaternion.h">
+      <Filter>Math\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\math\vector3.h">
+      <Filter>Math\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resourcemanagement\prefab.h">
+      <Filter>ResourceManagement\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\primitive_objects.h">
+      <Filter>PrimitiveObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\primitiveobjects\capsule.h">
+      <Filter>PrimitiveObjects\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\primitiveobjects\cube.h">
+      <Filter>PrimitiveObjects\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\primitiveobjects\cylinder.h">
+      <Filter>PrimitiveObjects\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\primitiveobjects\sphere.h">
+      <Filter>PrimitiveObjects\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\templetes\camera_obj.h">
+      <Filter>Temepletes\ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="include\templetes.h">
+      <Filter>Temepletes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

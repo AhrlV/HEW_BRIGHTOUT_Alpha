@@ -43,7 +43,7 @@ public:
 	float FovY = DirectX::XM_PI * 0.5f;
 	
 	// アスペクト比（幅/高さ）
-	float Aspect = 16.f/9.f;
+	float Aspect = 16.0f/9.0f;
 	
 	// 近クリップ面までの距離
 	float NearZ = 0.1f;
@@ -64,14 +64,18 @@ public:
 
 		auto tf = m_Owner->GetComponent<TransForm>();
 
-		XMFLOAT3 posF = tf->Position;
-		XMFLOAT3 rotF = tf->RotationEuler;
-
-		XMMATRIX R = XMMatrixRotationRollPitchYaw(rotF.x, rotF.y, rotF.z);
-		XMVECTOR f = XMVector3Normalize(XMVector3TransformNormal(XMVectorSet(0,0,1,0), R));
-		XMVECTOR u = XMVector3Normalize(XMVector3TransformNormal(XMVectorSet(0,1,0,0), R));
+		// Vector3からXMFLOAT3に変換
+		XMFLOAT3 posF = tf->Position().ToXMFLOAT3();
+		
+		// Quaternionを使って方向ベクトルを計算
+		Vector3 forward = tf->GetForward();
+		Vector3 up = tf->GetUp();
+		
+		XMVECTOR f = forward.ToXMVECTOR();
+		XMVECTOR u = up.ToXMVECTOR();
 		XMVECTOR pos = XMLoadFloat3(&posF);
-		return XMMatrixLookAtLH(pos, pos+f, u);
+		
+		return XMMatrixLookAtLH(pos, pos + f, u);
 	}
 	
 	// 射影行列を取得する

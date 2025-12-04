@@ -4,46 +4,52 @@
 
 #include "lifecycle.h"
 #include "rendering.h"
+#include "primitive_objects.h"
 #include "resource_management.h"
-#include <memory>
+#include "templetes.h"
 
-
-using namespace DirectX;
 
 class Kageyama : public Scene
 {
 private:
-
+	Textureptr player_tex;
+	Prefabptr kirby_prefab;
 
 public:
 
+	/*====================================================================
+		ResourceLoad - リソースの読み込み
+		テクスチャとモデルを読み込む。
+	====================================================================*/
 	void ResourceLoad() override
 	{
-
+		player_tex = TextureFactory::Create(L"dirt.png");
+		kirby_prefab = ModelFactory::LoadFromFBX(L"kirby.fbx", 10.0f);
 	}
 
+	/*====================================================================
+		Initialize - シーンの初期化
+		GameObjectを作成し、配置する。
+	====================================================================*/
 	void Initialize() override
-	{
-		GameObject* cube1 = new GameObject();
-		auto mr1 = cube1->AddComponent<MeshRenderer>();
-		mr1->SetMesh(MeshFactory::CreateCube());
-		mr1->material.SetBaseColor({1.0f, 1.0f, 1.0f, 1.0f});
-		mr1->material.SetTexture(TextureFactory::Create(L"dirt.png"));
-		auto tf1 = cube1->GetComponent<TransForm>();
-		tf1->Position.z += 2.0f;
-		tf1->Position.y += 3.0f;
+	{	
+		Cube* ground = new Cube();
+		auto ground_mr = ground->GetComponent<MeshRenderer>();
+		ground_mr->material.SetTexture(player_tex);
+		auto tf1 = ground->GetComponent<TransForm>();
+		tf1->Scale() = Vector3(10.0f, 1.0f, 10.0f);
+		tf1->Position().y -= 3.0f;
+		
 
-		GameObject* cube2 = new GameObject();
-		auto mr2 = cube2->AddComponent<MeshRenderer>();
-		mr2->SetMesh(MeshFactory::CreateCube(2.0f));
-		auto tf2 = cube2->GetComponent<TransForm>();
-		tf2->Position.x -= 2.0f;
+		auto kirby = Prefab::Instantiate(kirby_prefab.get());
+		auto tf = kirby->GetComponent<TransForm>();
+		tf->Position().x = 3.0f;
 
-		GameObject* camobj = new GameObject();
-		camobj->AddComponent<Camera>();
+		// カメラを作成
+		CameraObj* camobj = new CameraObj();
 		auto camtf = camobj->GetComponent<TransForm>();
-		camtf->Position.z -= 5.0f;
+		camtf->Position().z -= 5.0f;
 	}
 };
 
-#endif
+#endif // KAGEYAMA_H

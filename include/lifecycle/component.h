@@ -61,6 +61,27 @@ public:
 	GameObject* GetGameObject() const;
 	const GameObject* GetGameObjectConst() const;
 
+	/*====================================================================
+		Instantiate - Componentを複製して生成する
+		現在のアクティブシーンに登録し、生ポインタを返す。
+		
+		引数:
+		  original - 複製元のComponent
+		戻り値: 複製されたComponentの生ポインタ
+		例外: originalがnullptrの場合はruntime_errorをスロー
+	====================================================================*/
+	static Component* Instantiate(Component* original);
+
+	/*====================================================================
+		Destroy - Componentを削除する
+		削除フラグを立てる。
+		
+		引数:
+		  obj - 削除するComponent
+		例外: objがnullptrの場合はruntime_errorをスロー
+	====================================================================*/
+	static void Destroy(Component* obj);
+
 	// GameObject/GameLoopから内部にアクセスできるようにする
 	friend class GameObject;
 	friend class GameLoop;

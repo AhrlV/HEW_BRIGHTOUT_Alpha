@@ -20,13 +20,14 @@
     メンバ変数を初期化する。
 =============================================================================================================*/
 Mesh::Mesh()
-    : Resource(ResourceClassID::Mesh)
+    : Object()
     , m_VertexBuffer(nullptr)
     , m_IndexBuffer(nullptr)
     , m_IndexCount(0)
     , m_Topology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
     , m_VertexShader(nullptr)
 {
+    m_ClassID = ResourceClassID::Mesh;
 }
 
 /*============================================================================================================
@@ -35,13 +36,15 @@ Mesh::Mesh()
       name - このメッシュの識別名
 =============================================================================================================*/
 Mesh::Mesh(const std::wstring& name)
-    : Resource(name, ResourceClassID::Mesh)
+    : Object()
     , m_VertexBuffer(nullptr)
     , m_IndexBuffer(nullptr)
     , m_IndexCount(0)
     , m_Topology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
     , m_VertexShader(nullptr)
 {
+    m_Name = name;
+    m_ClassID = ResourceClassID::Mesh;
 }
 
 /*============================================================================================================

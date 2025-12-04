@@ -18,6 +18,8 @@ Object::Object()
 	: m_Id(0)
 	, m_Active(true)
 	, m_Destroy(false)
+	, m_ClassID(ResourceClassID::Unknown)
+	, m_Name(L"")
 {
 }
 
@@ -73,4 +75,42 @@ bool Object::IsDestroyed() const
 void Object::Destroy()
 {
 	m_Destroy = true;
+}
+
+/*====================================================================
+	クラスIDを取得する
+	戻り値: オブジェクトのクラスID（ResourceClassID列挙型）
+====================================================================*/
+ResourceClassID Object::GetClassID() const
+{
+	return m_ClassID;
+}
+
+/*====================================================================
+	クラスIDを設定する
+	引数:
+	  classID - 設定するクラスID（ResourceClassID列挙型）
+====================================================================*/
+void Object::SetClassID(ResourceClassID classID)
+{
+	m_ClassID = classID;
+}
+
+/*====================================================================
+	識別名を取得する
+	戻り値: オブジェクトの識別名
+====================================================================*/
+const std::wstring& Object::GetName() const
+{
+	return m_Name;
+}
+
+/*====================================================================
+	識別名を設定する
+	引数:
+	  name - 設定する識別名
+====================================================================*/
+void Object::SetName(const std::wstring& name)
+{
+	m_Name = name;
 }
