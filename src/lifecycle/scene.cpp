@@ -14,8 +14,6 @@
 #include "lifecycle/scene.h"
 #include "lifecycle/gameobject.h"
 #include "lifecycle/component.h"
-#include "rendering/camera.h"
-#include "rendering/mesh_renderer.h"
 #include "rendering/render_system.h"
 #include "resourcemanagement/resource_manager.h"
 #include "lifecycle/gameloop.h"
@@ -58,15 +56,18 @@ Scene::~Scene()
 	m_GameObjectMap.clear();
 	m_ComponentMap.clear();
 	m_ComponentTypeMap.clear();
+	m_TagMap.clear();
+	m_NameMap.clear();
 }
 
 /*====================================================================
 	GameObjectを登録する
 	Sceneが所有権を取得し、IDを付与する。
-	新規作成リストに追加して、次のProcessAwakeで初期化される。
+	新規作成リストに追加して、後でProcessAwakeで初期化する。
+	タグと名前のマップにも登録する。
 	
 	引数:
-	  go - 登録するGameObject（new で作成されたもの）
+	  go - 登録するGameObject（new で作成された物）
 ====================================================================*/
 void Scene::RegisterGameObject(GameObject* go)
 {
@@ -82,11 +83,24 @@ void Scene::RegisterGameObject(GameObject* go)
 	go->m_Id = m_NextGameObjectId++;
 	go->m_Scene = this;
 	m_GameObjectMap[go->m_Id] = go;
+	
+	// タグマップに登録（デフォルトタグ"Untagged"）
+	if (!go->m_Tag.empty())
+	{
+		RegisterGameObjectTag(go, go->m_Tag);
+	}
+	
+	// 名前マップに登録
+	if (!go->m_Name.empty())
+	{
+		RegisterGameObjectName(go, go->m_Name);
+	}
 }
 
 /*====================================================================
 	GameObjectの登録を解除する
-	管理マップから削除し、所属するコンポーネントも登録解除する。
+	管理マップから削除し、所属する全Componentを登録解除する。
+	タグと名前のマップからも削除する。
 	
 	引数:
 	  go - 登録解除するGameObject
@@ -100,9 +114,22 @@ void Scene::UnregisterGameObject(GameObject* go)
 
 	// マップから削除
 	m_GameObjectMap.erase(go->m_Id);
+	
+	// タグマップから削除
+	if (!go->m_Tag.empty())
+	{
+		UnregisterGameObjectTag(go, go->m_Tag);
+	}
+	
+	// 名前マップから削除
+	if (!go->m_Name.empty())
+	{
+		UnregisterGameObjectName(go, go->m_Name);
+	}
+	
 	go->m_Scene = nullptr;
 
-	// 所属する全コンポーネントを登録解除
+	// 所属する全Componentを登録解除
 	for(auto& comp : go->m_Components)
 	{
 		UnregisterComponent(comp.get());
@@ -197,6 +224,7 @@ void Scene::CleanupDestroyedObjects()
 /*====================================================================
 	Sceneを終了する
 	全てのGameObject/Componentを削除し、レンダリングシステムをクリーンアップする。
+	タグと名前のマップもクリアする。
 ====================================================================*/
 void Scene::Finalize()
 {
@@ -206,6 +234,10 @@ void Scene::Finalize()
 	m_ComponentMap.clear();
 	m_ComponentTypeMap.clear();
 	
+	// タグと名前のマップをクリア
+	m_TagMap.clear();
+	m_NameMap.clear();
+	
 	m_NextGameObjectId = 1;
 	m_NextComponentId = 1;
 	
@@ -213,7 +245,7 @@ void Scene::Finalize()
 
 	ResourceManager::Instance().Clear();
 
-	// GameLoopの未Startリストもクリア
+	// GameLoopの未Startリストをクリア
 	GameLoop::Instance().ClearPendingStart();
 }
 
@@ -261,4 +293,151 @@ Component* Scene::GetComponentById(uint64_t id) const
 {
 	auto it = m_ComponentMap.find(id);
 	return it == m_ComponentMap.end() ? nullptr : it->second;
+}
+
+/*====================================================================
+	タグによるGameObjectの検索（単一）
+	最初に見つかったGameObjectを返す。
+	
+	引数:
+	  tag - 検索するタグ文字列
+	戻り値: 見つかったGameObject（見つからない場合はnullptr）
+====================================================================*/
+GameObject* Scene::FindGameObjectWithTag(const std::wstring& tag) const
+{
+	auto it = m_TagMap.find(tag);
+	if (it != m_TagMap.end())
+	{
+		return it->second;
+	}
+	return nullptr;
+}
+
+/*====================================================================
+	タグによるすべてのGameObjectの検索
+	同じタグを持つすべてのGameObjectを返す。
+	
+	引数:
+	  tag - 検索するタグ文字列
+	戻り値: 見つかったGameObjectのリスト
+====================================================================*/
+std::vector<GameObject*> Scene::FindGameObjectsWithTag(const std::wstring& tag) const
+{
+	std::vector<GameObject*> results;
+	
+	auto range = m_TagMap.equal_range(tag);
+	for (auto it = range.first; it != range.second; ++it)
+	{
+		results.push_back(it->second);
+	}
+	
+	return results;
+}
+
+/*====================================================================
+	名前によるGameObjectの検索
+	指定された名前を持つGameObjectを返す。
+	
+	引数:
+	  name - 検索する名前
+	戻り値: 見つかったGameObject（見つからない場合はnullptr）
+====================================================================*/
+GameObject* Scene::FindGameObjectByName(const std::wstring& name) const
+{
+	auto it = m_NameMap.find(name);
+	if (it != m_NameMap.end())
+	{
+		return it->second;
+	}
+	return nullptr;
+}
+
+/*====================================================================
+	タグマップにGameObjectを登録する
+	
+	引数:
+	  go - 登録するGameObject
+	  tag - 登録するタグ
+====================================================================*/
+void Scene::RegisterGameObjectTag(GameObject* go, const std::wstring& tag)
+{
+	if (!go || tag.empty())
+	{
+		return;
+	}
+	
+	m_TagMap.insert(std::make_pair(tag, go));
+}
+
+/*====================================================================
+	タグマップからGameObjectを解除する
+	
+	引数:
+	  go - 解除するGameObject
+	  oldTag - 解除する古いタグ
+====================================================================*/
+void Scene::UnregisterGameObjectTag(GameObject* go, const std::wstring& oldTag)
+{
+	if (!go || oldTag.empty())
+	{
+		return;
+	}
+	
+	// マルチマップから特定のGameObjectのエントリを削除
+	auto range = m_TagMap.equal_range(oldTag);
+	for (auto it = range.first; it != range.second; )
+	{
+		if (it->second == go)
+		{
+			it = m_TagMap.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+/*====================================================================
+	名前マップにGameObjectを登録する
+	
+	引数:
+	  go - 登録するGameObject
+	  name - 登録する名前
+====================================================================*/
+void Scene::RegisterGameObjectName(GameObject* go, const std::wstring& name)
+{
+	if (!go || name.empty())
+	{
+		return;
+	}
+
+	auto it = m_NameMap.find(name);
+	if (it != m_NameMap.end())
+	{
+		throw std::runtime_error("Scene::RegisterGameObjectName: Duplicate GameObject name: " + std::string(name.begin(), name.end()));
+	}
+
+	m_NameMap[name] = go;
+}
+
+/*====================================================================
+	名前マップからGameObjectを解除する
+	
+	引数:
+	  go - 解除するGameObject
+	  oldName - 解除する古い名前
+====================================================================*/
+void Scene::UnregisterGameObjectName(GameObject* go, const std::wstring& oldName)
+{
+	if (!go || oldName.empty())
+	{
+		return;
+	}
+	
+	auto it = m_NameMap.find(oldName);
+	if (it != m_NameMap.end() && it->second == go)
+	{
+		m_NameMap.erase(it);
+	}
 }

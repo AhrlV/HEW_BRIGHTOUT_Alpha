@@ -4,6 +4,7 @@
 	Sceneクラス [scene.h]
 	ゲーム内の全 GameObject / Component を管理し、
 	型別検索や動的追加登録を提供する。
+	タグと名前によるGameObjectの検索機能をサポートする。
 
 	Author : Ryosuke Kageyama
 	Date   : 2025/11/26
@@ -18,6 +19,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include <cstdint>
+#include <string>
 
 // 前方宣言
 class GameObject;
@@ -26,6 +28,7 @@ class Component;
 /*====================================================================
 	Sceneクラス
 	ゲーム内の全GameObjectとComponentを管理する。
+	タグと名前によるGameObjectの検索機能をサポートする。
 ====================================================================*/
 class Scene 
 {
@@ -42,30 +45,51 @@ private:
 	// 型別のコンポーネント配列
 	std::unordered_map<std::type_index, std::vector<Component*>> m_ComponentTypeMap;
 
-	// 内部登録解除メソッド
+	/*====================================================================
+		タグと名前によるGameObjectの検索マップ
+	====================================================================*/
+	
+	// タグとGameObjectのマルチマップ（同じタグを持つGameObjectが複数存在可能）
+	std::unordered_multimap<std::wstring, GameObject*> m_TagMap;
+	
+	// 名前とGameObjectのマップ（名前は一意であることを想定）
+	std::unordered_map<std::wstring, GameObject*> m_NameMap;
+
+	// 削除登録される内部メソッド
 	void UnregisterGameObject(GameObject* go);
 
-	// 破棄フラグが立ったオブジェクトを削除する
+	// 破壊フラグが立っているオブジェクトを削除する
 	void CleanupDestroyedObjects();
 
 public:
-	// コンストラクタ・デストラクタ
+	/*====================================================================
+		コンストラクタとデストラクタ
+	====================================================================*/
+	
+	// コンストラクタ
 	Scene();
+	
+	// デストラクタ
 	virtual ~Scene();
 
-
-
+	/*====================================================================
+		ライフサイクルメソッド
+	====================================================================*/
+	
 	// リソース読み込み
 	virtual void ResourceLoad() {};
+	
 	// 初期化
 	virtual void Initialize() {};
 	
-
-
 	// 終了処理
-	// シーン切り替え時に呼び出され、RenderSystemやResourceManagerなどの中身を解放する
+	// シーン切り替え時に呼び出され、RenderSystemやResourceManagerなどの中身を破棄する
 	virtual void Finalize();
 
+	/*====================================================================
+		GameObjectとComponentの管理
+	====================================================================*/
+	
 	// GameObject登録（Sceneが所有権を取得）
 	void RegisterGameObject(GameObject* go);
 
@@ -73,17 +97,91 @@ public:
 	void RegisterComponent(Component* comp, GameObject* owner);
 	void UnregisterComponent(Component* comp);
 
-
-	// 破棄処理を実行
+	// 破壊処理の実行
 	void ProcessCleanup();
 
 	// 描画処理
 	void Render();
 
-	// 取得系
+	/*====================================================================
+		GameObjectの検索（ID/タグ/名前）
+	====================================================================*/
+	
+	// IDによる検索
 	GameObject* GetGameObjectById(uint64_t id) const;
 	Component* GetComponentById(uint64_t id) const;
 
+	/*====================================================================
+		タグによるGameObjectの検索
+		
+		引数:
+		  tag - 検索するタグ文字列
+		戻り値: 見つかったGameObject（見つからない場合はnullptr）
+	====================================================================*/
+	GameObject* FindGameObjectWithTag(const std::wstring& tag) const;
+	
+	/*====================================================================
+		タグによるすべてのGameObjectの検索
+		
+		引数:
+		  tag - 検索するタグ文字列
+		戻り値: 見つかったGameObjectのリスト
+	====================================================================*/
+	std::vector<GameObject*> FindGameObjectsWithTag(const std::wstring& tag) const;
+	
+	/*====================================================================
+		名前によるGameObjectの検索
+		
+		引数:
+		  name - 検索する名前
+		戻り値: 見つかったGameObject（見つからない場合はnullptr）
+	====================================================================*/
+	GameObject* FindGameObjectByName(const std::wstring& name) const;
+
+	/*====================================================================
+		タグと名前のマップ管理（内部用）
+	====================================================================*/
+	
+	/*====================================================================
+		タグマップにGameObjectを登録する
+		
+		引数:
+		  go - 登録するGameObject
+		  tag - 登録するタグ
+	====================================================================*/
+	void RegisterGameObjectTag(GameObject* go, const std::wstring& tag);
+	
+	/*====================================================================
+		タグマップからGameObjectを解除する
+		
+		引数:
+		  go - 解除するGameObject
+		  oldTag - 解除する古いタグ
+	====================================================================*/
+	void UnregisterGameObjectTag(GameObject* go, const std::wstring& oldTag);
+	
+	/*====================================================================
+		名前マップにGameObjectを登録する
+		
+		引数:
+		  go - 登録するGameObject
+		  name - 登録する名前
+	====================================================================*/
+	void RegisterGameObjectName(GameObject* go, const std::wstring& name);
+	
+	/*====================================================================
+		名前マップからGameObjectを解除する
+		
+		引数:
+		  go - 解除するGameObject
+		  oldName - 解除する古い名前
+	====================================================================*/
+	void UnregisterGameObjectName(GameObject* go, const std::wstring& oldName);
+
+	/*====================================================================
+		Componentの型別取得
+	====================================================================*/
+	
 	// 全Component取得（GameLoopから使用）
 	const std::unordered_map<uint64_t, Component*>& GetAllComponents() const
 	{

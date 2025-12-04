@@ -15,5 +15,6 @@
 #include "rendering/mesh_renderer.h"
 #include "rendering/property_block.h"
 #include "rendering/material_property_block.h"
+#include "rendering/camera_obj.h"
 
 #endif

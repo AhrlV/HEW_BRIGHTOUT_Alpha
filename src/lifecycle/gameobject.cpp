@@ -28,6 +28,7 @@ GameObject::GameObject()
 	, m_Scene(nullptr)
 	, m_Transform(std::make_unique<TransForm>())
 	, m_ActiveSelf(true)
+	, m_Tag(L"Untagged")
 {
 	// GameObjectのクラスIDを設定
 	m_ClassID = ResourceClassID::GameObject;
@@ -68,6 +69,7 @@ GameObject::GameObject(bool skipSceneRegistration)
 	, m_Scene(nullptr)
 	, m_Transform(std::make_unique<TransForm>())
 	, m_ActiveSelf(true)
+	, m_Tag(L"Untagged")
 {
 	// GameObjectのクラスIDを設定
 	m_ClassID = ResourceClassID::GameObject;
@@ -124,6 +126,31 @@ void GameObject::SetActiveSelf(bool active)
 bool GameObject::IsActiveSelf() const
 {
 	return m_ActiveSelf;
+}
+
+/*====================================================================
+	名前を設定する
+	名前を設定し、Sceneの名前マップに自動的に登録する。
+	
+	引数:
+	  name - 設定する名前
+====================================================================*/
+void GameObject::SetName(const std::wstring& name)
+{
+	// 古い名前での登録を解除
+	if (m_Scene && !m_Name.empty())
+	{
+		m_Scene->UnregisterGameObjectName(this, m_Name);
+	}
+	
+	// 新しい名前を設定
+	m_Name = name;
+	
+	// 新しい名前で登録
+	if (m_Scene && !m_Name.empty())
+	{
+		m_Scene->RegisterGameObjectName(this, m_Name);
+	}
 }
 
 /*====================================================================
@@ -305,6 +332,111 @@ GameObject* GameObject::GetChild(size_t index) const
 	return childTransform->GetGameObject();
 }
 
+/*====================================================================
+	タグを設定する
+	GameObjectをグループ化するためのタグを設定する。
+	Sceneのタグマップに自動的に登録される。
+	
+	引数:
+	  tag - 設定するタグ文字列
+====================================================================*/
+void GameObject::SetTag(const std::wstring& tag)
+{
+	// 古いタグでの登録を解除
+	if (m_Scene && !m_Tag.empty())
+	{
+		m_Scene->UnregisterGameObjectTag(this, m_Tag);
+	}
+	
+	// 新しいタグを設定
+	m_Tag = tag;
+	
+	// 新しいタグで登録
+	if (m_Scene && !m_Tag.empty())
+	{
+		m_Scene->RegisterGameObjectTag(this, m_Tag);
+	}
+}
+
+/*====================================================================
+	タグを取得する
+	
+	戻り値: 現在設定されているタグ文字列
+====================================================================*/
+const std::wstring& GameObject::GetTag() const
+{
+	return m_Tag;
+}
+
+/*====================================================================
+	指定されたタグを持つかチェックする
+	
+	引数:
+	  tag - チェックするタグ文字列
+	戻り値: 指定されたタグを持つ場合true
+====================================================================*/
+bool GameObject::CompareTag(const std::wstring& tag) const
+{
+	return m_Tag == tag;
+}
+
+/*====================================================================
+	指定されたタグを持つGameObjectを検索する（単一）
+	最初に見つかったGameObjectを返す。
+	現在のアクティブシーンから検索する。
+	
+	引数:
+	  tag - 検索するタグ文字列
+	戻り値: 見つかったGameObject（見つからない場合はnullptr）
+====================================================================*/
+GameObject* GameObject::FindWithTag(const std::wstring& tag)
+{
+	Scene* activeScene = SceneManager::Instance().GetActiveScene();
+	if (!activeScene)
+	{
+		return nullptr;
+	}
+	
+	return activeScene->FindGameObjectWithTag(tag);
+}
+
+/*====================================================================
+	指定されたタグを持つすべてのGameObjectを検索する
+	現在のアクティブシーンから検索する。
+	
+	引数:
+	  tag - 検索するタグ文字列
+	戻り値: 見つかったGameObjectのリスト
+====================================================================*/
+std::vector<GameObject*> GameObject::FindGameObjectsWithTag(const std::wstring& tag)
+{
+	Scene* activeScene = SceneManager::Instance().GetActiveScene();
+	if (!activeScene)
+	{
+		return std::vector<GameObject*>();
+	}
+	
+	return activeScene->FindGameObjectsWithTag(tag);
+}
+
+/*====================================================================
+	指定された名前を持つGameObjectを検索する
+	現在のアクティブシーンから検索する。
+	
+	引数:
+	  name - 検索する名前
+	戻り値: 見つかったGameObject（見つからない場合はnullptr）
+====================================================================*/
+GameObject* GameObject::Find(const std::wstring& name)
+{
+	Scene* activeScene = SceneManager::Instance().GetActiveScene();
+	if (!activeScene)
+	{
+		return nullptr;
+	}
+	
+	return activeScene->FindGameObjectByName(name);
+}
 /*====================================================================
 	Instantiate - GameObjectを複製して生成する
 	現在のアクティブシーンに登録し、生ポインタを返す。

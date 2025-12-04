@@ -6,7 +6,6 @@
 #include "rendering.h"
 #include "primitive_objects.h"
 #include "resource_management.h"
-#include "templetes.h"
 
 
 class Kageyama : public Scene
