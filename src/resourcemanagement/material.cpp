@@ -1,7 +1,7 @@
 /*============================================================================================================
 
     マテリアルクラス実装 [material.cpp]
-    3Dモデルの材質情報の管理を行う。
+    3Dモデルの材質の管理を行う。
 
     Author : Ryosuke Kageyama
     Date   : 2025/11/25
@@ -22,7 +22,7 @@
     メンバ変数を初期化し、デフォルト値を設定する。
 =============================================================================================================*/
 Material::Material()
-    : Resource(ResourceClassID::Material)
+    : Object()
     , BaseColor(1.0f, 1.0f, 1.0f, 1.0f)
     , DiffuseColor(1.0f, 1.0f, 1.0f, 1.0f)
     , AmbientColor(0.3f, 0.3f, 0.3f, 1.0f)
@@ -38,6 +38,7 @@ Material::Material()
     , m_BlendState(nullptr)
     , m_DepthState(nullptr)
 {
+    m_ClassID = ResourceClassID::Material;
     Initialize();
 }
 
@@ -47,7 +48,7 @@ Material::Material()
       name - このマテリアルの識別名
 =============================================================================================================*/
 Material::Material(const std::wstring& name)
-    : Resource(name, ResourceClassID::Material)
+    : Object()
     , BaseColor(1.0f, 1.0f, 1.0f, 1.0f)
     , DiffuseColor(1.0f, 1.0f, 1.0f, 1.0f)
     , AmbientColor(0.3f, 0.3f, 0.3f, 1.0f)
@@ -63,6 +64,8 @@ Material::Material(const std::wstring& name)
     , m_BlendState(nullptr)
     , m_DepthState(nullptr)
 {
+    m_Name = name;
+    m_ClassID = ResourceClassID::Material;
     Initialize();
 }
 
@@ -111,7 +114,10 @@ void Material::Release()
     m_BlendState.Reset();
     m_DepthState.Reset();
     m_Sampler.Reset();
-    Texture->Release();
+    if (Texture)
+    {
+        Texture->Release();
+    }
     
     m_PixelShader.reset();
 }

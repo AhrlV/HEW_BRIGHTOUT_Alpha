@@ -32,10 +32,33 @@ Scene::Scene()
 
 /*====================================================================
 	デストラクタ
-	Sceneを破棄する。
+	Sceneを破棄する前に、全てのGameObjectとコンポーネントを
+	安全にクリアする。
 ====================================================================*/
-Scene::~Scene() = default;
+Scene::~Scene()
+{
+	// GameObjectを破棄する前に、各GameObjectに対してコンポーネントの登録解除を行う
+	for (auto& go_ptr : m_GameObjects)
+	{
+		if (go_ptr)
+		{
+			// GameObjectが持つコンポーネントをクリア
+			// これによりコンポーネントのデストラクタが呼ばれる
+			go_ptr->m_Components.clear();
+			
+			// TransFormもクリア
+			go_ptr->m_Transform.reset();
+		}
+	}
 
+	// GameObjectsをクリア（unique_ptrのデストラクタが自動的に呼ばれる）
+	m_GameObjects.clear();
+	
+	// マップもクリア
+	m_GameObjectMap.clear();
+	m_ComponentMap.clear();
+	m_ComponentTypeMap.clear();
+}
 
 /*====================================================================
 	GameObjectを登録する
@@ -172,23 +195,6 @@ void Scene::CleanupDestroyedObjects()
 }
 
 /*====================================================================
-	GameObjectを破棄する
-	Destroyフラグを立てる。実際の削除はCleanupDestroyedObjects()で行われる。
-	
-	引数:
-	  target - 破棄するGameObject
-====================================================================*/
-void Scene::DestroyGameObject(GameObject* target)
-{
-	if (!target)
-	{
-		return;
-	}
-
-	target->Destroy();
-}
-
-/*====================================================================
 	Sceneを終了する
 	全てのGameObject/Componentを削除し、レンダリングシステムをクリーンアップする。
 ====================================================================*/
@@ -209,23 +215,6 @@ void Scene::Finalize()
 
 	// GameLoopの未Startリストもクリア
 	GameLoop::Instance().ClearPendingStart();
-}
-
-/*====================================================================
-	保留中のコンポーネントをSceneに登録する
-	全GameObjectの未登録コンポーネント（m_AddedComponents）をSceneに登録し、
-	リストをクリアする。
-====================================================================*/
-void Scene::RegisterPendingComponents()
-{
-	for(auto& gameobj : m_GameObjects)
-	{
-		for(auto* comp : gameobj->m_AddedComponents)
-		{
-			RegisterComponent(comp, gameobj.get());
-		}
-		gameobj->m_AddedComponents.clear();
-	}
 }
 
 /*====================================================================

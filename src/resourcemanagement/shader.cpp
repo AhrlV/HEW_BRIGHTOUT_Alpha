@@ -23,9 +23,10 @@
     メンバ変数を初期化する。
 =============================================================================================================*/
 Shader::Shader()
-    : Resource(ResourceClassID::Shader)
+    : Object()
     , m_ShaderType(ShaderType::Unknown)
 {
+    m_ClassID = ResourceClassID::Shader;
 }
 
 /*============================================================================================================
@@ -34,9 +35,10 @@ Shader::Shader()
       type - シェーダーのタイプ
 =============================================================================================================*/
 Shader::Shader(ShaderType type)
-    : Resource(ResourceClassID::Shader)
+    : Object()
     , m_ShaderType(type)
 {
+    m_ClassID = ResourceClassID::Shader;
 }
 
 /*============================================================================================================
@@ -46,9 +48,11 @@ Shader::Shader(ShaderType type)
       type - シェーダーのタイプ
 =============================================================================================================*/
 Shader::Shader(const std::wstring& name, ShaderType type)
-    : Resource(name, ResourceClassID::Shader)
+    : Object()
     , m_ShaderType(type)
 {
+    m_Name = name;
+    m_ClassID = ResourceClassID::Shader;
 }
 
 /*============================================================================================================

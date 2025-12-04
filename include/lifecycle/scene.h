@@ -48,9 +48,6 @@ private:
 	// 破棄フラグが立ったオブジェクトを削除する
 	void CleanupDestroyedObjects();
 
-	// 保留中のコンポーネントをSceneに登録する
-	void RegisterPendingComponents();
-
 public:
 	// コンストラクタ・デストラクタ
 	Scene();
@@ -76,8 +73,6 @@ public:
 	void RegisterComponent(Component* comp, GameObject* owner);
 	void UnregisterComponent(Component* comp);
 
-	// GameObject破棄
-	void DestroyGameObject(GameObject* target);
 
 	// 破棄処理を実行
 	void ProcessCleanup();

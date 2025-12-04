@@ -1,7 +1,7 @@
 /*============================================================================================================
 
-    テクスチャクラス実装 [texture.cpp]
-    テクスチャリソースの読み込みと管理を行う。
+    テクスチャークラス実装 [texture.cpp]
+    テクスチャーリソースの読み込みと管理を行う。
 
     Author : Ryosuke Kageyama
     Date   : 2025/05/07
@@ -20,11 +20,12 @@ using namespace DirectX;
     メンバ変数を初期化する。
 =============================================================================================================*/
 Texture::Texture()
-    : Resource(ResourceClassID::Texture)
+    : Object()
     , m_ShaderResourceView(nullptr)
     , m_Width(0)
     , m_Height(0)
 {
+    m_ClassID = ResourceClassID::Texture;
 }
 
 /*============================================================================================================
@@ -33,11 +34,13 @@ Texture::Texture()
       name - このテクスチャの識別名
 =============================================================================================================*/
 Texture::Texture(const std::wstring& name)
-    : Resource(name, ResourceClassID::Texture)
+    : Object()
     , m_ShaderResourceView(nullptr)
     , m_Width(0)
     , m_Height(0)
 {
+    m_Name = name;
+    m_ClassID = ResourceClassID::Texture;
 }
 
 /*============================================================================================================

@@ -17,7 +17,7 @@
 #include <vector>
 #include <memory>
 #include <DirectXMath.h>
-#include "resourcemanagement/resource.h"
+#include "lifecycle/object.h"
 
 // 前方宣言
 class VertexShader;
@@ -37,9 +37,9 @@ struct MeshVertex
 /*============================================================================================================
     メッシュクラス
     3Dモデルの頂点データとインデックスデータを管理する。
-    Resourceクラスを継承し、ResourceManagerによる一元管理が可能。
+    Objectクラスを継承し、ResourceManagerによる一元管理が可能。
 =============================================================================================================*/
-class Mesh : public Resource
+class Mesh : public Object
 {
 public:
 	// デフォルトコンストラクタ
@@ -66,15 +66,15 @@ public:
 	bool Initialize(const std::vector<MeshVertex>& vertices, const std::vector<uint32_t>& indices);
 
 	/*========================================================================================================
-	    Resource基底クラスのオーバーライド
+	    リソース管理
 	========================================================================================================*/
 	
 	// リソースを解放する
-	void Release() override;
+	void Release();
 	
 	// リソースが有効かどうかを判定する
 	// 戻り値: 頂点バッファとインデックスバッファが有効な場合true
-	bool IsValid() const override;
+	bool IsValid() const;
 
 	/*========================================================================================================
 	    ゲッター関数群
