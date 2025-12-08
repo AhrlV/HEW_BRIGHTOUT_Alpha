@@ -29,7 +29,6 @@ using Meshptr     = std::shared_ptr<Mesh>;
 using Textureptr  = std::shared_ptr<Texture>;
 using Materialptr = std::shared_ptr<Material>;
 using Shaderptr   = std::shared_ptr<Shader>;
-using Modelptr    = std::shared_ptr<Model>;
-using Prefabptr   = std::shared_ptr<Prefab>;
+using Modelptr   = std::shared_ptr<Prefab>;
 
 #endif

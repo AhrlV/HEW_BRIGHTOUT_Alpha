@@ -11,8 +11,8 @@ class Kageyama : public Scene
 {
 private:
 	Textureptr player_tex;
-	Prefabptr kirby_prefab;
-	Prefabptr house_prefab;
+	Modelptr kirby_prefab;
+	Modelptr house_prefab;
 
 public:
 
@@ -54,6 +54,8 @@ public:
 		CameraObj* camobj = new CameraObj();
 		auto camtf = camobj->GetComponent<TransForm>();
 		camtf->Position().z -= 5.0f;
+		camobj->SetName(L"MainCamera");
+		camobj->SetTag(L"camera");
 	}
 };
 

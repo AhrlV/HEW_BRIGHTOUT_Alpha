@@ -100,8 +100,6 @@
     <ClInclude Include="include\resourcemanagement\texture.h" />
     <ClInclude Include="include\resourcemanagement\texture_factory.h" />
     <ClInclude Include="include\scene\kageyama.h" />
-    <ClInclude Include="include\templetes.h" />
-    <ClInclude Include="include\templetes\camera_obj.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\hlsl\PixelShader2D.hlsl">
@@ -159,7 +157,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>

@@ -75,12 +75,6 @@
     <Filter Include="PrimitiveObjects\ヘッダーファイル">
       <UniqueIdentifier>{ee82d80d-4730-4da7-9fc3-9b83e00ab5fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Temepletes">
-      <UniqueIdentifier>{478919a0-6814-4e71-b8e1-85d2e5fc5d82}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Temepletes\ヘッダーファイル">
-      <UniqueIdentifier>{583c710e-2324-4edf-8c2a-64dcb5d12c6a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\direct3D\debug_text.cpp">
@@ -318,12 +312,6 @@
     </ClInclude>
     <ClInclude Include="include\primitiveobjects\sphere.h">
       <Filter>PrimitiveObjects\ヘッダーファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="include\templetes\camera_obj.h">
-      <Filter>Temepletes\ヘッダーファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="include\templetes.h">
-      <Filter>Temepletes</Filter>
     </ClInclude>
     <ClInclude Include="include\rendering\camera_obj.h">
       <Filter>Rendering\ヘッダーファイル</Filter>
