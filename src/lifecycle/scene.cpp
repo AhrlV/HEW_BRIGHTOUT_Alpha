@@ -412,12 +412,6 @@ void Scene::RegisterGameObjectName(GameObject* go, const std::wstring& name)
 		return;
 	}
 
-	auto it = m_NameMap.find(name);
-	if (it != m_NameMap.end())
-	{
-		throw std::runtime_error("Scene::RegisterGameObjectName: Duplicate GameObject name: " + std::string(name.begin(), name.end()));
-	}
-
 	m_NameMap[name] = go;
 }
 

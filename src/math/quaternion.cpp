@@ -2,6 +2,9 @@
 
 	Quaternionクラス [quaternion.cpp]
 	クォータニオンクラスの実装。
+	
+	【重要】インターフェースは度数法（degree）で統一
+	内部処理では自動的にラジアンに変換される
 
 	Author : AI Assistant
 	Date   : 2025/01/20
@@ -76,51 +79,57 @@ XMVECTOR Quaternion::ToXMVECTOR() const
 }
 
 /*====================================================================
-	X軸回転を設定（ラジアン）
+	X軸回転を設定（度数法）
 ====================================================================*/
-void Quaternion::SetEulerX(float angleX)
+void Quaternion::SetEulerX(float angleDegrees)
 {
-	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(angleX, 0.0f, 0.0f);
+	float angleRadians = DegreesToRadians(angleDegrees);
+	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(angleRadians, 0.0f, 0.0f);
 	*this = Quaternion(quat);
 }
 
 /*====================================================================
-	Y軸回転を設定（ラジアン）
+	Y軸回転を設定（度数法）
 ====================================================================*/
-void Quaternion::SetEulerY(float angleY)
+void Quaternion::SetEulerY(float angleDegrees)
 {
-	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(0.0f, angleY, 0.0f);
+	float angleRadians = DegreesToRadians(angleDegrees);
+	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(0.0f, angleRadians, 0.0f);
 	*this = Quaternion(quat);
 }
 
 /*====================================================================
-	Z軸回転を設定（ラジアン）
+	Z軸回転を設定（度数法）
 ====================================================================*/
-void Quaternion::SetEulerZ(float angleZ)
+void Quaternion::SetEulerZ(float angleDegrees)
 {
-	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(0.0f, 0.0f, angleZ);
+	float angleRadians = DegreesToRadians(angleDegrees);
+	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(0.0f, 0.0f, angleRadians);
 	*this = Quaternion(quat);
 }
 
 /*====================================================================
-	オイラー角を一括設定（ラジアン、XYZ順）
+	オイラー角を一括設定（度数法、XYZ順）
 ====================================================================*/
-void Quaternion::SetEulerAngles(float pitch, float yaw, float roll)
+void Quaternion::SetEulerAngles(float pitchDegrees, float yawDegrees, float rollDegrees)
 {
-	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
+	float pitchRadians = DegreesToRadians(pitchDegrees);
+	float yawRadians = DegreesToRadians(yawDegrees);
+	float rollRadians = DegreesToRadians(rollDegrees);
+	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(pitchRadians, yawRadians, rollRadians);
 	*this = Quaternion(quat);
 }
 
 /*====================================================================
-	オイラー角を一括設定（Vector3版）
+	オイラー角を一括設定（Vector3版、度数法）
 ====================================================================*/
-void Quaternion::SetEulerAngles(const Vector3& eulerAngles)
+void Quaternion::SetEulerAngles(const Vector3& eulerAnglesDegrees)
 {
-	SetEulerAngles(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+	SetEulerAngles(eulerAnglesDegrees.x, eulerAnglesDegrees.y, eulerAnglesDegrees.z);
 }
 
 /*====================================================================
-	X軸回転を取得（ラジアン）
+	X軸回転を取得（度数法）
 ====================================================================*/
 float Quaternion::GetEulerX() const
 {
@@ -129,7 +138,7 @@ float Quaternion::GetEulerX() const
 }
 
 /*====================================================================
-	Y軸回転を取得（ラジアン）
+	Y軸回転を取得（度数法）
 ====================================================================*/
 float Quaternion::GetEulerY() const
 {
@@ -138,7 +147,7 @@ float Quaternion::GetEulerY() const
 }
 
 /*====================================================================
-	Z軸回転を取得（ラジアン）
+	Z軸回転を取得（度数法）
 ====================================================================*/
 float Quaternion::GetEulerZ() const
 {
@@ -147,7 +156,7 @@ float Quaternion::GetEulerZ() const
 }
 
 /*====================================================================
-	オイラー角を一括取得（ラジアン）
+	オイラー角を一括取得（度数法）
 ====================================================================*/
 Vector3 Quaternion::GetEulerAngles() const
 {
@@ -173,34 +182,59 @@ Vector3 Quaternion::GetEulerAngles() const
 	float cosy_cosp = 1.0f - 2.0f * (m_y * m_y + m_z * m_z);
 	float yaw = std::atan2(siny_cosp, cosy_cosp);
 	
-	return Vector3(roll, pitch, yaw);
+	// ラジアンから度数法に変換
+	return Vector3(RadiansToDegrees(roll), RadiansToDegrees(pitch), RadiansToDegrees(yaw));
 }
 
 /*====================================================================
-	X軸回転を追加（ラジアン）
+	X軸回転を追加（度数法）
 ====================================================================*/
-void Quaternion::RotateX(float angleX)
+void Quaternion::RotateX(float angleDegrees)
 {
-	Quaternion rotX = FromEulerAngles(angleX, 0.0f, 0.0f);
+	Quaternion rotX = FromEulerAngles(angleDegrees, 0.0f, 0.0f);
 	*this = *this * rotX;
 }
 
 /*====================================================================
-	Y軸回転を追加（ラジアン）
+	Y軸回転を追加（度数法）
 ====================================================================*/
-void Quaternion::RotateY(float angleY)
+void Quaternion::RotateY(float angleDegrees)
 {
-	Quaternion rotY = FromEulerAngles(0.0f, angleY, 0.0f);
+	Quaternion rotY = FromEulerAngles(0.0f, angleDegrees, 0.0f);
 	*this = *this * rotY;
 }
 
 /*====================================================================
-	Z軸回転を追加（ラジアン）
+	Z軸回転を追加（度数法）
 ====================================================================*/
-void Quaternion::RotateZ(float angleZ)
+void Quaternion::RotateZ(float angleDegrees)
 {
-	Quaternion rotZ = FromEulerAngles(0.0f, 0.0f, angleZ);
+	Quaternion rotZ = FromEulerAngles(0.0f, 0.0f, angleDegrees);
 	*this = *this * rotZ;
+}
+
+/*====================================================================
+	オイラー角を追加回転（Vector3版、度数法）
+====================================================================*/
+void Quaternion::Rotate(const Vector3& eulerAnglesDegrees)
+{
+	Quaternion rot = FromEulerAngles(eulerAnglesDegrees);
+	*this = *this * rot;
+}
+
+/*====================================================================
+	現在の回転にオイラー角を加算（Vector3版、度数法）
+====================================================================*/
+void Quaternion::AddEulerAngles(const Vector3& eulerAnglesDegrees)
+{
+	// 現在のオイラー角を取得
+	Vector3 currentAngles = GetEulerAngles();
+	
+	// 新しい角度を加算
+	Vector3 newAngles = currentAngles + eulerAnglesDegrees;
+	
+	// 新しいオイラー角で設定
+	SetEulerAngles(newAngles);
 }
 
 /*====================================================================
@@ -269,24 +303,27 @@ Quaternion Quaternion::Inverse() const
 }
 
 /*====================================================================
-	オイラー角からクォータニオンを作成（ラジアン、XYZ順）
+	オイラー角からクォータニオンを作成（度数法、XYZ順）
 ====================================================================*/
-Quaternion Quaternion::FromEulerAngles(float pitch, float yaw, float roll)
+Quaternion Quaternion::FromEulerAngles(float pitchDegrees, float yawDegrees, float rollDegrees)
 {
-	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
+	float pitchRadians = DegreesToRadians(pitchDegrees);
+	float yawRadians = DegreesToRadians(yawDegrees);
+	float rollRadians = DegreesToRadians(rollDegrees);
+	XMVECTOR quat = XMQuaternionRotationRollPitchYaw(pitchRadians, yawRadians, rollRadians);
 	return Quaternion(quat);
 }
 
 /*====================================================================
-	オイラー角からクォータニオンを作成（Vector3版）
+	オイラー角からクォータニオンを作成（Vector3版、度数法）
 ====================================================================*/
-Quaternion Quaternion::FromEulerAngles(const Vector3& eulerAngles)
+Quaternion Quaternion::FromEulerAngles(const Vector3& eulerAnglesDegrees)
 {
-	return FromEulerAngles(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+	return FromEulerAngles(eulerAnglesDegrees.x, eulerAnglesDegrees.y, eulerAnglesDegrees.z);
 }
 
 /*====================================================================
-	クォータニオンをオイラー角に変換（ラジアン）
+	クォータニオンをオイラー角に変換（度数法）
 ====================================================================*/
 Vector3 Quaternion::ToEulerAngles() const
 {
@@ -294,12 +331,13 @@ Vector3 Quaternion::ToEulerAngles() const
 }
 
 /*====================================================================
-	軸と角度からクォータニオンを作成
+	軸と角度からクォータニオンを作成（度数法）
 ====================================================================*/
-Quaternion Quaternion::FromAxisAngle(const Vector3& axis, float angle)
+Quaternion Quaternion::FromAxisAngle(const Vector3& axis, float angleDegrees)
 {
+	float angleRadians = DegreesToRadians(angleDegrees);
 	XMVECTOR axisVec = axis.ToXMVECTOR();
-	XMVECTOR quat = XMQuaternionRotationAxis(axisVec, angle);
+	XMVECTOR quat = XMQuaternionRotationAxis(axisVec, angleRadians);
 	return Quaternion(quat);
 }
 

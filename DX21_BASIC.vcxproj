@@ -81,6 +81,7 @@
     <ClInclude Include="include\primitive_objects.h" />
     <ClInclude Include="include\rendering.h" />
     <ClInclude Include="include\rendering\camera.h" />
+    <ClInclude Include="include\rendering\camera_obj.h" />
     <ClInclude Include="include\rendering\material_property_block.h" />
     <ClInclude Include="include\rendering\mesh_renderer.h" />
     <ClInclude Include="include\rendering\property_block.h" />

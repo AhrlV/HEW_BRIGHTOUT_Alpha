@@ -1,4 +1,3 @@
-
 #ifndef KAGEYAMA_H
 #define KAGEYAMA_H
 
@@ -13,6 +12,7 @@ class Kageyama : public Scene
 private:
 	Textureptr player_tex;
 	Prefabptr kirby_prefab;
+	Prefabptr house_prefab;
 
 public:
 
@@ -24,6 +24,7 @@ public:
 	{
 		player_tex = TextureFactory::Create(L"dirt.png");
 		kirby_prefab = ModelFactory::LoadFromFBX(L"kirby.fbx", 10.0f);
+		house_prefab = ModelFactory::LoadFromFBX(L"house.fbx", 0.5f);
 	}
 
 	/*====================================================================
@@ -39,6 +40,11 @@ public:
 		tf1->Scale() = Vector3(10.0f, 1.0f, 10.0f);
 		tf1->Position().y -= 3.0f;
 		
+
+		auto house = Prefab::Instantiate(house_prefab.get());
+		auto house_tf = house->GetComponent<TransForm>();
+		house_tf->Rotation().SetEulerY(-90.0f);
+
 
 		auto kirby = Prefab::Instantiate(kirby_prefab.get());
 		auto tf = kirby->GetComponent<TransForm>();

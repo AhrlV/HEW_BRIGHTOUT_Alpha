@@ -325,6 +325,9 @@
     <ClInclude Include="include\templetes.h">
       <Filter>Temepletes</Filter>
     </ClInclude>
+    <ClInclude Include="include\rendering\camera_obj.h">
+      <Filter>Rendering\ヘッダーファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\hlsl\PixelShader2D.hlsl">

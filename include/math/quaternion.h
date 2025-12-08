@@ -5,7 +5,10 @@
 	Quaternionクラス [quaternion.h]
 	DirectXMathライブラリのXMVECTORとXMQuaternionをラップした
 	クォータニオンクラス。内部でXYZW成分を保持し、
-	オイラー角による操作も提供する。
+	オイラー角による操作を提供する。
+	
+	【重要】インターフェースは度数法（degree）で統一
+	内部処理では自動的にラジアンに変換される
 
 	Author : AI Assistant
 	Date   : 2025/01/20
@@ -22,9 +25,13 @@
 
 /*====================================================================
 	Quaternionクラス
-	回転を表すクラス。
+	回転を表現するクラス。
 	内部でクォータニオン成分（XYZW）を保持し、
-	オイラー角による操作インターフェースも提供する。
+	オイラー角による操作インターフェースを提供する。
+	
+	【使用方法】
+	全ての角度パラメータは度数法（0～360度）で指定
+	例: SetEulerY(90.0f) → Y軸周りに90度回転
 ====================================================================*/
 class Quaternion
 {
@@ -56,44 +63,50 @@ public:
 	DirectX::XMVECTOR ToXMVECTOR() const;
 
 	/*====================================================================
-		オイラー角による操作
+		オイラー角による操作（度数法で指定）
 	====================================================================*/
 	
-	// X軸回転を設定（ラジアン）
-	void SetEulerX(float angleX);
+	// X軸回転を設定（度数法: 0～360）
+	void SetEulerX(float angleDegrees);
 	
-	// Y軸回転を設定（ラジアン）
-	void SetEulerY(float angleY);
+	// Y軸回転を設定（度数法: 0～360）
+	void SetEulerY(float angleDegrees);
 	
-	// Z軸回転を設定（ラジアン）
-	void SetEulerZ(float angleZ);
+	// Z軸回転を設定（度数法: 0～360）
+	void SetEulerZ(float angleDegrees);
 	
-	// オイラー角を一括設定（ラジアン、XYZ順）
-	void SetEulerAngles(float pitch, float yaw, float roll);
+	// オイラー角を一括設定（度数法、XYZ順）
+	void SetEulerAngles(float pitchDegrees, float yawDegrees, float rollDegrees);
 	
-	// オイラー角を一括設定（Vector3版）
-	void SetEulerAngles(const Vector3& eulerAngles);
+	// オイラー角を一括設定（Vector3版、度数法）
+	void SetEulerAngles(const Vector3& eulerAnglesDegrees);
 	
-	// X軸回転を取得（ラジアン）
+	// X軸回転を取得（度数法: 0～360）
 	float GetEulerX() const;
 	
-	// Y軸回転を取得（ラジアン）
+	// Y軸回転を取得（度数法: 0～360）
 	float GetEulerY() const;
 	
-	// Z軸回転を取得（ラジアン）
+	// Z軸回転を取得（度数法: 0～360）
 	float GetEulerZ() const;
 	
-	// オイラー角を一括取得（ラジアン）
+	// オイラー角を一括取得（度数法）
 	Vector3 GetEulerAngles() const;
 	
-	// X軸回転を追加（ラジアン）
-	void RotateX(float angleX);
+	// X軸回転を追加（度数法: 0～360）
+	void RotateX(float angleDegrees);
 	
-	// Y軸回転を追加（ラジアン）
-	void RotateY(float angleY);
+	// Y軸回転を追加（度数法: 0～360）
+	void RotateY(float angleDegrees);
 	
-	// Z軸回転を追加（ラジアン）
-	void RotateZ(float angleZ);
+	// Z軸回転を追加（度数法: 0～360）
+	void RotateZ(float angleDegrees);
+	
+	// オイラー角を追加回転（Vector3版、度数法）
+	void Rotate(const Vector3& eulerAnglesDegrees);
+	
+	// 現在の回転にオイラー角を加算（Vector3版、度数法）
+	void AddEulerAngles(const Vector3& eulerAnglesDegrees);
 
 	/*====================================================================
 		クォータニオン演算
@@ -118,20 +131,20 @@ public:
 	Quaternion Inverse() const;
 
 	/*====================================================================
-		回転関数
+		回転関数（度数法で指定）
 	====================================================================*/
 	
-	// オイラー角からクォータニオンを作成（ラジアン、XYZ順）
-	static Quaternion FromEulerAngles(float pitch, float yaw, float roll);
+	// オイラー角からクォータニオンを作成（度数法、XYZ順）
+	static Quaternion FromEulerAngles(float pitchDegrees, float yawDegrees, float rollDegrees);
 	
-	// オイラー角からクォータニオンを作成（Vector3版）
-	static Quaternion FromEulerAngles(const Vector3& eulerAngles);
+	// オイラー角からクォータニオンを作成（Vector3版、度数法）
+	static Quaternion FromEulerAngles(const Vector3& eulerAnglesDegrees);
 	
-	// クォータニオンをオイラー角に変換（ラジアン）
+	// クォータニオンをオイラー角に変換（度数法）
 	Vector3 ToEulerAngles() const;
 	
-	// 軸と角度からクォータニオンを作成
-	static Quaternion FromAxisAngle(const Vector3& axis, float angle);
+	// 軸と角度からクォータニオンを作成（度数法）
+	static Quaternion FromAxisAngle(const Vector3& axis, float angleDegrees);
 	
 	// ベクトルを回転
 	Vector3 RotateVector(const Vector3& v) const;
@@ -194,13 +207,29 @@ public:
 
 private:
 	/*====================================================================
-		メンバ変数（クォータニオン成分）
+		内部メンバ変数（クォータニオン成分）
 	====================================================================*/
 	
 	float m_x;  // X成分
 	float m_y;  // Y成分
 	float m_z;  // Z成分
 	float m_w;  // W成分
+	
+	/*====================================================================
+		内部ヘルパー関数
+	====================================================================*/
+	
+	// 度数法をラジアンに変換
+	static inline float DegreesToRadians(float degrees)
+	{
+		return DirectX::XMConvertToRadians(degrees);
+	}
+	
+	// ラジアンを度数法に変換
+	static inline float RadiansToDegrees(float radians)
+	{
+		return DirectX::XMConvertToDegrees(radians);
+	}
 };
 
 // スカラー * クォータニオン の演算子（左側のスカラー乗算）
